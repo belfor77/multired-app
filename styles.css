@@ -1,0 +1,2926 @@
+/* styles.css */
+
+/* ======= THEME TOKENS ======= */
+/* styles.css */
+
+/* ======= THEME TOKENS (SaaS Profesional) ======= */
+:root {
+  /* Colores de Marca Movistar */
+  --brand-blue: #019DF4;
+  --brand-blue-hover: #007bb5;
+  --brand-green: #5BC500;
+  --brand-green-hover: #4da600;
+
+  /* === MODO OSCURO POR DEFECTO === */
+  --bg-app: #0B0F19; 
+  --bg-card: #111827; 
+  --bg-sidebar: #111827;
+
+  --text-main: #F9FAFB;
+  --text-muted: #9CA3AF;
+
+  /* Aliases para compatibilidad con el resto del CSS */
+  --text: var(--text-main);
+  --muted: var(--text-muted);
+  --bg1: var(--bg-app);
+
+  --border-light: #1F2937;
+  --fieldBg: #1F2937;
+  --fieldBd: #374151;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* === MODO CLARO === */
+html[data-theme="light"] {
+  /* Fondo un poco más gris/azulado para que el blanco resalte */
+  --bg-app: #E2E8F0; 
+  --bg-card: #FFFFFF;
+  --bg-sidebar: #FFFFFF;
+
+  --text-main: #111827;
+  --text-muted: #6B7280;
+
+  --border-light: #CBD5E1;
+  --fieldBg: #F8FAFC;
+  --fieldBd: #CBD5E1;
+
+  /* Sombra un poco más marcada para "despegar" las tarjetas del fondo */
+  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); 
+}
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  color: var(--text-main);
+  background-color: var(--bg-app);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ✅ Transición elegante tipo iOS */
+body.theme-transition{
+  transition: background 280ms ease, color 280ms ease;
+}
+body.theme-transition .glass,
+body.theme-transition .card,
+body.theme-transition .field,
+body.theme-transition .btn,
+body.theme-transition .primary,
+body.theme-transition .user,
+body.theme-transition .icon-btn,
+body.theme-transition .table-wrap{
+  transition: background-color 280ms ease, border-color 280ms ease, color 280ms ease, box-shadow 280ms ease;
+}
+
+/* Apagamos el fondo difuminado tipo neón */
+.bg { display: none; }
+
+/* Tarjetas sólidas y corporativas (sin blur) */
+.glass {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* Blur sutil solo en oscuro (se siente app moderna) */
+html[data-theme="dark"] .glass{
+  background: rgba(17,24,39,.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* ======= TOASTS ======= */
+.toast-wrap{
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 120000;
+  pointer-events: none;
+}
+.toast{
+  pointer-events: auto;
+  min-width: 260px;
+  max-width: 340px;
+  border-radius: 16px;
+  padding: 12px 12px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(20,24,32,.88);
+  box-shadow: 0 16px 40px rgba(0,0,0,.35);
+  animation: toastIn .22s ease;
+}
+html[data-theme="light"] .toast{
+  background: rgba(255,255,255,.92);
+  box-shadow: 0 16px 40px rgba(0,0,0,.12);
+}
+.toast .t-title{ font-weight: 950; }
+.toast .t-meta{ margin-top: 4px; color: var(--muted); font-weight: 650; font-size: 12px; }
+@keyframes toastIn{
+  from{ opacity:0; transform: translateY(-6px); }
+  to{ opacity:1; transform: translateY(0); }
+}
+
+/* ======= Top Nav ======= */
+.topnav{
+  width: min(1100px, calc(100% - 56px));
+  margin: 22px auto 0;
+  padding: 14px 18px;
+  border-radius: 999px;
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 16px;
+  
+  /* Le agregamos el fondo blanco y la sombra */
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+
+  position: sticky;
+  top: 22px;
+  z-index: 9999;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  min-width: 240px;
+  gap: 10px;
+}
+
+/* Toggle Sidebar */
+.side-toggle{
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  display:grid;
+  place-items:center;
+  padding: 0;
+}
+.side-toggle .chev{
+  display:inline-block;
+  transition: transform .2s ease;
+  font-size: 18px;
+  line-height: 1;
+}
+body.side-collapsed .side-toggle .chev{ transform: rotate(180deg); }
+
+.brand-bigtext{
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: var(--text);
+  text-shadow:
+    0 0 10px rgba(201,255,47,0.18),
+    0 0 22px rgba(201,255,47,0.10),
+    0 0 45px rgba(201,255,47,0.06);
+}
+
+.toplinks{
+  display:flex;
+  gap: 18px;
+  align-items:center;
+  justify-content:center;
+  flex-wrap: wrap;
+}
+.toplinks a{
+  color: var(--muted);
+  text-decoration:none;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 8px 10px;
+  border-radius: 999px;
+}
+.toplinks a:hover{
+  color: var(--text);
+  background: rgba(255,255,255,.08);
+}
+
+.topright{
+  position: relative;
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  min-width: 150px;
+  justify-content:flex-end;
+  z-index: 10000;
+}
+
+.pill{ border-radius: 999px; padding: 10px 14px; }
+
+.icon-btn{
+  border: 1px solid rgba(255,255,255,.16);
+  background: rgba(255,255,255,.08);
+  color: var(--text);
+  cursor:pointer;
+}
+.icon-btn:hover{ background: rgba(255,255,255,.12); }
+
+html[data-theme="light"] .icon-btn{
+  border-color: rgba(20,30,50,.16);
+  background: rgba(255,255,255,.72);
+}
+
+.user{
+  display:flex;
+  align-items:center;
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,.16);
+  background: rgba(255,255,255,.08);
+  padding: 10px 12px;
+  border-radius: 999px;
+  cursor:pointer;
+}
+.user .dot{
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34,197,94,.18);
+}
+.user .avatar{ opacity:.9; }
+
+/* ======= User Dropdown ======= */
+.user-menu{
+  position:absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 280px;
+  border-radius: 18px;
+  padding: 10px;
+  z-index: 20000;
+  background: linear-gradient(180deg, rgba(20,24,32,.88), rgba(20,24,32,.74));
+}
+html[data-theme="light"] .user-menu{
+  background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.82));
+}
+
+.user-menu-top{
+  display:flex;
+  align-items:center;
+  gap: 12px;
+  padding: 8px 8px 10px;
+}
+.user-menu-avatar{
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display:grid;
+  place-items:center;
+  border: 1px solid rgba(255,255,255,.16);
+  background: rgba(255,255,255,.10);
+}
+.user-menu-name{ font-weight: 900; }
+.user-menu-role{ color: var(--muted); font-weight: 700; font-size: 13px; margin-top:2px; }
+
+.user-menu-item{
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  cursor:pointer;
+  border-radius: 14px;
+  padding: 10px 10px;
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  font-weight: 800;
+  text-align:left;
+}
+.user-menu-item:hover{ background: rgba(255,255,255,.08); }
+.user-menu-item .umi-ico{ width: 22px; text-align:center; opacity: .9; }
+.user-menu-item.danger{ color: var(--text); }
+.user-menu-sep{
+  height: 1px;
+  margin: 8px 6px;
+  background: rgba(255,255,255,.16);
+}
+
+/* ======= Shell ======= */
+.shell {
+  width: min(1100px, calc(100% - 56px));
+  margin: 22px auto 0;
+  display: grid;
+  /* Estado abierto: 200px para el menú lateral */
+  grid-template-columns: 200px 1fr; 
+  gap: 18px;
+  align-items: start;
+  transition: grid-template-columns .25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 1;
+}
+
+/* Estado colapsado: se encoge a 72px (estilo Gmail) */
+body.side-collapsed .shell { 
+  grid-template-columns: 72px 1fr; 
+}
+
+/* ======= Left icon bar (Sidebar) - Versión Final Simétrica ======= */
+.iconbar {
+  border-radius: 22px;
+  padding: 14px !important; 
+  display: flex;
+  flex-direction: column;
+  gap: 10px; 
+  transition: all .25s ease;
+  background: var(--bg-sidebar);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 100px; 
+  height: fit-content;
+  z-index: 90;
+}
+
+/* Alineación para modo colapsado */
+body.side-collapsed .iconbar {
+  align-items: center;
+}
+
+/* Políticas y Ajustes: Sin márgenes extra para mantener simetría */
+#btnSidePolicies {
+  margin-top: 0 !important;
+  position: relative;
+}
+
+/* Línea divisoria minimalista que no empuja los iconos */
+#btnSidePolicies::before {
+  content: "";
+  position: absolute;
+  top: -5px; /* Exactamente en el centro del gap de 10px */
+  left: 20%;
+  width: 60%;
+  height: 1px;
+  background: rgba(120, 130, 140, 0.15);
+}
+
+/* Botones del menú lateral */
+.ibtn {
+  width: 100%;
+  height: 40px; /* Un poco más compactos */
+  border-radius: 8px;
+  border: none; /* Quitamos los bordes tipo cristal */
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 14px;
+  gap: 12px;
+  transition: all 0.2s ease;
+  overflow: hidden;
+}
+
+html[data-theme="light"] .ibtn {
+  color: var(--text-muted);
+}
+
+.ibtn .ico { 
+  width: 20px; 
+  height: 20px; 
+  flex-shrink: 0; 
+}
+
+/* Efecto al pasar el mouse */
+.ibtn:hover {
+  background: rgba(1, 157, 244, 0.05);
+  color: var(--brand-blue);
+  transform: translateX(4px);
+}
+
+/* Botón seleccionado (Activo) */
+.ibtn.active {
+  background: rgba(1, 157, 244, 0.1);
+  color: var(--brand-blue);
+  font-weight: 700;
+}
+
+/* Texto del botón */
+.ibtn-text {
+  font-weight: 600;
+  font-size: 14px;
+  white-space: nowrap;
+  transition: opacity 0.2s ease;
+}
+
+/* --- Texto del botón --- */
+.ibtn-text {
+  font-weight: 700;
+  font-size: 14px;
+  white-space: nowrap;
+  transition: opacity .2s ease;
+}
+
+/* Comportamiento al colapsar (Solo iconos) */
+body.side-collapsed .ibtn {
+  width: 48px;
+  padding: 0;
+  justify-content: center;
+}
+
+body.side-collapsed .ibtn-text {
+  display: none; /* Escondemos el texto */
+}
+
+/* ======= Main & Layout ======= */
+.main { padding-bottom: 20px; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 18px;
+}
+/* Layout */
+.card-big{ grid-column: 1 / span 7; min-height: 150px; display:flex; flex-direction: column; justify-content:center; }
+.chart{ grid-column: 8 / span 5; grid-row: 1 / span 3; min-height: 420px; }
+.grid > article:nth-of-type(3){ grid-column: 1 / span 4; }
+.grid > article:nth-of-type(4){ grid-column: 5 / span 3; }
+.grid > article:nth-of-type(5){ grid-column: 1 / span 4; }
+.grid > article:nth-of-type(6){ grid-column: 5 / span 3; }
+
+/* Chart UI */
+.chart-head{ display:flex; align-items:center; justify-content: space-between; margin-bottom: 14px; }
+.chart-title{ font-weight: 800; }
+.chip{
+  font-size: 12px;
+  color: var(--muted);
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.08);
+}
+html[data-theme="light"] .chip{
+  border-color: rgba(20,30,50,.14);
+  background: rgba(255,255,255,.72);
+}
+
+.chart-area{
+  display:grid;
+  grid-template-columns: 44px 1fr;
+  gap: 12px;
+  align-items: end;
+  height: 320px;
+}
+.axis{
+  display:flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  font-size: 12px;
+  color: rgba(255,255,255,.45);
+}
+html[data-theme="light"] .axis{ color: rgba(15,20,30,.45); }
+.bars{
+  height: 100%;
+  display:flex;
+  align-items:flex-end;
+  justify-content: space-around;
+  border-left: 1px solid rgba(255,255,255,.10);
+  border-bottom: 1px solid rgba(255,255,255,.10);
+  padding: 12px 10px;
+}
+html[data-theme="light"] .bars{
+  border-left-color: rgba(20,30,50,.14);
+  border-bottom-color: rgba(20,30,50,.14);
+}
+.barcol{ display:flex; flex-direction: column; align-items:center; gap: 10px; }
+/* ======= BARRAS DEL GRÁFICO CORPORATIVO ======= */
+.bar {
+  width: 24px;
+  border-radius: 6px 6px 0 0; /* Plano abajo, redondeado arriba */
+  background: var(--brand-blue);
+  box-shadow: 0 0 0 4px rgba(1, 157, 244, 0.15); /* Halo azul suave */
+  transition: all 0.3s ease;
+}
+.bar:hover {
+  background: var(--brand-blue-hover);
+  transform: translateY(-2px);
+}
+
+/* Barras secundarias (Meses anteriores) */
+.bar.gray {
+  background: var(--border-light);
+  box-shadow: none;
+}
+
+html[data-theme="light"] .bar.gray {
+  background: #E2E8F0; /* Gris muy suave para que el mes actual destaque más */
+}
+.bar.y1{ height: 12px; }
+.bar.y2{ height: 120px; }
+.bar.y3{ height: 190px; }
+.bar.y4{ height: 260px; }
+.mon{ font-size: 12px; color: rgba(255,255,255,.55); }
+html[data-theme="light"] .mon{ color: rgba(15,20,30,.55); }
+
+/* Ventas */
+.section-title{ margin: 4px 0 14px; font-size: 20px; font-weight: 900; color: var(--text); }
+.ventas-view{ padding: 6px 0 0; color: var(--text); }
+
+.ventas-actions{
+  display:grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  gap: 18px;
+  max-width: 820px;
+}
+.action-card{
+  border: 0;
+  text-align: left;
+  padding: 22px;
+  border-radius: 22px;
+  cursor: pointer;
+  transition: transform .15s ease;
+  color: var(--text);
+}
+.action-card:hover{ transform: translateY(-1px); }
+.action-title{ font-size: 22px; font-weight: 900; color: var(--text); }
+.action-sub{ margin-top: 6px; color: var(--muted); font-weight: 650; }
+.ventas-back{ margin-top: 18px; }
+
+/* ======= Animación suave entre vistas ======= */
+.view-in{
+  animation: viewIn .18s ease;
+}
+@keyframes viewIn{
+  from{ opacity: 0; transform: translateY(4px); }
+  to{ opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Empty state ===== */
+.empty{
+  padding: 26px;
+  border-radius: 18px;
+  border: 1px dashed rgba(255,255,255,.16);
+  background: rgba(255,255,255,.04);
+  color: var(--muted);
+  text-align: center;
+}
+html[data-theme="light"] .empty{
+  border-color: rgba(15,20,30,.14);
+  background: rgba(15,20,30,.03);
+}
+.empty .ico{ font-size: 28px; margin-bottom: 8px; }
+.empty .t{ font-weight: 900; color: var(--text); margin-bottom: 6px; }
+.empty .s{ font-weight: 650; }
+
+/* ===== Chips estado ===== */
+.chip-status{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 900;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+}
+.chip-status .dot{
+  width:8px; height:8px; border-radius: 50%;
+}
+.chip-status[data-s="Validación"] .dot{ background: rgba(34,197,94,.9); }
+.chip-status[data-s="Instalación"] .dot{ background: rgba(1,157,244,.95); }
+.chip-status[data-s="Exitosa"] .dot{ background: rgba(34,197,94,.95); }
+.chip-status[data-s="Rechazada"] .dot{ background: rgba(239,68,68,.95); }
+
+/* Footer */
+.foot{ margin-top: 18px; color: var(--muted); font-size: 13px; padding: 4px 2px; }
+
+/* ======= MODALES CORPORATIVOS ======= */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.75); /* Oscurecimiento sólido y elegante */
+  backdrop-filter: blur(3px); /* Un desenfoque muy, muy sutil */
+  -webkit-backdrop-filter: blur(3px);
+  display: grid;
+  place-items: center;
+  z-index: 100000;
+}
+
+.modal {
+  width: min(860px, 92vw);
+  border-radius: 12px; /* Más cuadrado, menos "burbuja" */
+  overflow: hidden;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-card);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); /* Sombra pesada para destacar */
+  border: 1px solid var(--border-light);
+}
+.modal-wide { width: min(920px, 92vw); }
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px; /* Un poco más de aire */
+  border-bottom: 1px solid var(--border-light);
+  background: var(--bg-app); /* Cabecera sutilmente diferenciada del cuerpo */
+}
+
+.modal-head h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.modal-body {
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.field-label{
+  display:block;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing:.4px;
+}
+.field-row{ display:flex; gap: 10px; align-items:center; }
+
+/* Campos de formulario B2B */
+.field {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 8px; /* Más cuadrado y formal */
+  border: 1px solid var(--fieldBd);
+  background: var(--fieldBg);
+  color: var(--text-main);
+  outline: none;
+  font-size: 14px; /* Tamaño estándar en software de escritorio */
+  transition: all 0.2s ease;
+}
+
+/* Anillo azul cuando haces clic para escribir */
+.field:focus {
+  border-color: var(--brand-blue);
+  box-shadow: 0 0 0 3px rgba(1, 157, 244, 0.15);
+}
+
+.field::placeholder { 
+  color: var(--text-muted); 
+}
+
+/* 👇 Arreglo para las opciones del select 👇 */
+option {
+  background-color: var(--bg1);
+  color: var(--text);
+}
+
+html[data-theme="light"] option {
+  background-color: #ffffff;
+  color: var(--text);
+}
+/* 👆 Fin del arreglo 👆 */
+
+/* (bloque duplicado .primary eliminado) */
+.primary{
+  border: 1px solid rgba(201,255,47,.35);
+  background: rgba(201,255,47,.14);
+  color: var(--text);
+  border-radius: 14px;
+  padding: 10px 14px;
+  cursor:pointer;
+  font-weight: 900;
+}
+.primary:hover{ background: rgba(201,255,47,.20); }
+
+.btn{
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.08);
+  color: var(--text);
+  border-radius: 14px;
+  padding: 10px 14px;
+  cursor:pointer;
+}
+.btn:hover{ background: rgba(255,255,255,.12); }
+html[data-theme="light"] .btn{
+  border-color: rgba(20,30,50,.14);
+  background: rgba(255,255,255,.72);
+}
+
+.hint{ margin: 14px 0 0; color: var(--muted); font-size: 13px; }
+.mini-hint{ margin-top: 6px; color: var(--muted); font-size: 12px; font-weight: 650; }
+
+/* Form */
+.form-grid{ display:grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.form-field label{
+  display:block;
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-weight: 800;
+  font-size: 12px;
+}
+.form-field.wide{ grid-column: span 2; }
+
+.form-actions{ display:flex; justify-content:flex-end; gap: 10px; margin-top: 14px; }
+.wide-primary{ min-width: 180px; }
+
+/* ======= TABLAS CORPORATIVAS ======= */
+.table-wrap {
+  overflow: auto;
+  border-radius: 8px; /* Bordes más cuadrados */
+  border: 1px solid var(--border-light);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 780px;
+}
+
+.table th, .table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-light);
+  text-align: left;
+  font-size: 14px;
+  color: var(--text-main);
+  transition: background 0.2s ease;
+}
+
+.table th {
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--bg-app); /* Fondo sutil para diferenciar el encabezado */
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+}
+
+/* Efecto hover al pasar el mouse por una fila */
+.table tr:hover td {
+  background: rgba(1, 157, 244, 0.04); /* Un toque del azul Movistar muy transparente */
+}
+
+.table td .row-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+/* Search row */
+.search-row{ display:flex; gap: 10px; align-items:center; flex-wrap: wrap; }
+
+/* Avisos list */
+.avisos-list{ display:flex; flex-direction: column; gap: 10px; }
+.aviso-item{
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.08);
+  border-radius: 16px;
+  padding: 12px 12px;
+}
+.aviso-title{ font-weight: 900; }
+.aviso-meta{ margin-top: 4px; color: var(--muted); font-weight: 650; font-size: 13px; }
+
+/* ======= SPLASH INTRO ======= */
+.splash{
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(900px 600px at 50% 30%, rgba(201,255,47,.10), transparent 60%),
+              rgba(10,14,20,.92);
+  z-index: 999;
+}
+html[data-theme="light"] .splash{
+  background: radial-gradient(900px 600px at 50% 30%, rgba(201,255,47,.14), transparent 60%),
+              rgba(245,247,251,.92);
+}
+.splash-inner{
+  display:flex;
+  flex-direction: column;
+  align-items:center;
+  gap: 14px;
+  animation: splashWrap 1.6s ease forwards;
+}
+.splash-logo{
+  width: 92px;
+  height: 92px;
+  border-radius: 26px;
+  display:grid;
+  place-items:center;
+  font-weight: 1000;
+  font-size: 54px;
+  color: var(--text);
+  background: rgba(255,255,255,.10);
+  border: 1px solid rgba(255,255,255,.18);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 16px 44px rgba(0,0,0,.35);
+  animation: popIn .65s ease forwards;
+}
+.splash-title{
+  font-size: 28px;
+  font-weight: 950;
+  letter-spacing: .6px;
+  color: var(--text);
+  opacity: 0;
+  transform: translateY(8px);
+  animation: titleIn .7s ease .35s forwards;
+}
+@keyframes popIn{
+  from{ opacity:0; transform: scale(.85); filter: blur(2px); }
+  to{ opacity:1; transform: scale(1); filter: blur(0); }
+}
+@keyframes titleIn{ to{ opacity: 1; transform: translateY(0); } }
+@keyframes splashWrap{
+  0%{ opacity: 1; }
+  70%{ opacity: 1; }
+  100%{ opacity: 0; pointer-events:none; }
+}
+
+/* Spinner */
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255,255,255,.3);
+  border-radius: 50%;
+  border-top-color: var(--lime);
+  animation: spin 1s ease-in-out infinite;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ===== FIX LOGIN MODAL OVERLAY ===== */
+#loginBackdrop{
+  position: fixed;
+  inset: 0;
+  background: rgba(8,12,18,0.96);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  z-index: 99999;
+  display: grid;
+  place-items: center;
+}
+html[data-theme="light"] #loginBackdrop{ background: rgba(240,244,250,0.96); }
+#loginBackdrop .modal{
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: linear-gradient(180deg, var(--glassA), var(--glassB));
+  z-index: 100000;
+}
+body:not(.auth-ready) .shell,
+body:not(.auth-ready) .topnav{
+  filter: blur(6px);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ======= AUTH TABS ======= */
+.auth-modal{ border-radius: 22px; }
+.auth-tabs{ display:flex; gap: 10px; padding: 12px 18px 0; }
+.auth-tab{
+  flex: 1;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.08);
+  color: var(--muted);
+  padding: 10px 12px;
+  border-radius: 14px;
+  font-weight: 900;
+  cursor:pointer;
+}
+.auth-tab.active{
+  color: var(--text);
+  border-color: rgba(201,255,47,.35);
+  background: rgba(201,255,47,.14);
+}
+.auth-grid{ grid-template-columns: 1fr 1fr; }
+.auth-row{ display:flex; justify-content:flex-end; }
+.linkbtn{
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 800;
+  cursor:pointer;
+  padding: 4px 0;
+}
+.linkbtn:hover{ color: var(--text); }
+
+.checkline{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  color: var(--text);
+  font-weight: 800;
+}
+
+/* ======= SETTINGS ======= */
+.settings-title{ font-weight: 1000; font-size: 16px; }
+.settings-sub{ margin-top: 4px; color: var(--muted); font-weight: 650; font-size: 13px; }
+.settings-row{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 0;
+}
+.settings-left{ min-width: 0; }
+.settings-label{ font-weight: 900; }
+.settings-hint{ margin-top: 3px; color: var(--muted); font-weight: 650; font-size: 12px; }
+.settings-divider{ height: 1px; background: rgba(255,255,255,.14); margin: 10px 0 4px; }
+html[data-theme="light"] .settings-divider{ background: rgba(20,30,50,.12); }
+
+/* ✅ iOS switch */
+.ios-switch{
+  position: relative;
+  width: 52px;
+  height: 30px;
+  flex: 0 0 auto;
+}
+.ios-switch input{ opacity: 0; width: 0; height: 0; }
+.ios-switch .track{
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: rgba(140,140,140,.35);
+  border: 1px solid rgba(255,255,255,.16);
+  transition: background 220ms ease, border-color 220ms ease;
+}
+.ios-switch .track::after{
+  content:"";
+  position:absolute;
+  width: 26px;
+  height: 26px;
+  top: 1px;
+  left: 1px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.95);
+  box-shadow: 0 6px 14px rgba(0,0,0,.25);
+  transition: transform 220ms ease;
+}
+.ios-switch input:checked + .track{
+  background: rgba(34,197,94,.90);
+  border-color: rgba(34,197,94,.55);
+}
+.ios-switch input:checked + .track::after{ transform: translateX(22px); }
+
+/* ======= SUPPORT CHAT ======= */
+.support-fab{
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  width: 58px;
+  height: 58px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.16);
+  background: rgba(255,255,255,.10);
+  color: var(--text);
+  cursor: pointer;
+  z-index: 99999;
+  box-shadow: 0 18px 35px rgba(0,0,0,.25);
+  font-size: 22px;
+  display:grid;
+  place-items:center;
+}
+.support-fab:hover{ background: rgba(255,255,255,.14); }
+
+.badge{
+  position:absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  display:grid;
+  place-items:center;
+  font-size: 12px;
+  font-weight: 950;
+  background: rgba(239,68,68,.92);
+  color: #fff;
+  border: 2px solid rgba(20,24,32,.85);
+}
+
+.support-panel{
+  position: fixed;
+  right: 18px;
+  bottom: 86px;
+  width: min(380px, calc(100vw - 36px));
+  height: 520px;
+  border-radius: 22px;
+  overflow: hidden;
+  z-index: 99999;
+  display:flex;
+  flex-direction: column;
+}
+.support-head{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(255,255,255,.14);
+}
+.support-title{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  font-weight: 1000;
+}
+.support-dot{
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 4px rgba(34,197,94,.18);
+}
+.support-actions{ display:flex; gap: 8px; }
+
+.support-body{
+  flex: 1;
+  padding: 12px 14px;
+  overflow:auto;
+  display:flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.msg{
+  max-width: 92%;
+  border-radius: 16px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.08);
+}
+.msg.me{
+  align-self: flex-end;
+  background: rgba(201,255,47,.14);
+  border-color: rgba(201,255,47,.28);
+}
+.msg .meta{
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 6px;
+  font-weight: 700;
+}
+
+.support-compose{
+  padding: 12px 12px;
+  border-top: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+  display:flex;
+  gap: 10px;
+  align-items:center;
+}
+.support-mini{
+  padding: 10px 10px;
+  border-radius: 14px;
+  font-size: 14px;
+}
+.support-hintline{
+  padding: 10px 12px 12px;
+  border-top: 1px solid rgba(255,255,255,.10);
+}
+
+/* Details */
+.detail-grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.detail-box{
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+  padding: 12px 12px;
+}
+.detail-h{ font-weight: 950; }
+.detail-c{ margin-top: 8px; color: var(--text); font-weight: 650; font-size: 14px; }
+.detail-chat{
+  margin-top: 8px;
+  height: 320px;
+  overflow:auto;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.12);
+  padding: 10px;
+  background: rgba(0,0,0,.12);
+}
+html[data-theme="light"] .detail-chat{ background: rgba(255,255,255,.55); }
+
+/* Responsive */
+@media (max-width: 980px){
+  .card-big{ grid-column: 1 / span 12; }
+  .chart{ grid-column: 1 / span 12; grid-row:auto; min-height: 360px; }
+  .grid > article:nth-of-type(3),
+  .grid > article:nth-of-type(4),
+  .grid > article:nth-of-type(5),
+  .grid > article:nth-of-type(6){
+    grid-column: 1 / span 6;
+  }
+}
+
+@media (max-width: 700px){
+  .topnav{
+    width: calc(100% - 24px);
+    margin: 12px auto 0;
+    padding: 10px 12px;
+    border-radius: 22px;
+    gap: 10px;
+  }
+  .brand{ min-width: 0; flex: 1; gap: 8px; }
+  .brand-bigtext{
+    font-size: 22px;
+    letter-spacing: .5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  .topright{ min-width: 0; gap: 8px; }
+  .pill{ padding: 8px 10px; }
+  .user{ padding: 8px 10px; }
+  .side-toggle{ width: 36px; height: 36px; }
+
+  .glass{
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 10px 26px rgba(0,0,0,.25);
+  }
+
+  .bg{ filter: blur(10px); opacity: .40; }
+
+  .shell{ grid-template-columns: 1fr; transition:none; }
+  .iconbar{
+    position: sticky;
+    top: 90px;
+    flex-direction: row;
+    justify-content: space-between;
+    transition: transform .2s ease, opacity .2s ease;
+    z-index: 2;
+  }
+  body.side-collapsed .iconbar{
+    transform: translateY(-140%);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .grid{ grid-template-columns: 1fr; }
+  .grid > article{ grid-column: 1 / span 12 !important; }
+  .form-grid{ grid-template-columns: 1fr; }
+  .form-field.wide{ grid-column: span 1; }
+  .toplinks{ display:none; }
+  .ventas-actions{ grid-template-columns: 1fr; }
+
+  .table{ min-width: 760px; }
+
+  .support-panel{
+    right: 12px;
+    bottom: 80px;
+    width: calc(100vw - 24px);
+    height: 560px;
+  }
+  .support-fab{ right: 12px; bottom: 12px; }
+
+  .detail-grid{ grid-template-columns: 1fr; }
+}/* Tarjeta de Venta Individual */
+.sale-card {
+  display: flex;
+  flex-direction: column;
+  padding: 18px;
+  border-radius: 12px; /* Más corporativo */
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.sale-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--brand-blue); /* Se ilumina el borde en azul al pasar el mouse */
+}
+
+/* Encabezado de la tarjeta */
+.sc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 12px;
+}
+
+.sc-rut { font-weight: 800; font-size: 14px; color: var(--text-main); }
+.sc-name { font-size: 13px; color: var(--text-muted); font-weight: 600; }
+.sc-date { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
+
+/* Bloque "Agenda de Instalación" */
+.sc-agenda-box {
+  background: var(--bg-app); /* Fondo gris claro u oscuro sólido, sin transparencias raras */
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  padding: 12px;
+  flex: 0.8;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.sc-agenda-title { font-size: 11px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; }
+.sc-agenda-text { font-size: 11px; color: var(--text-muted); }
+
+/* Footer de la tarjeta */
+.sc-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-light);
+}
+
+.sc-code { font-size: 12px; font-weight: 700; color: var(--text-muted); }
+/* Encabezado de la tarjeta */
+.sc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding-bottom: 12px;
+}
+.sc-client-info { display: flex; flex-direction: column; gap: 4px; }
+.sc-rut { font-weight: 900; font-size: 15px; color: var(--text); }
+.sc-name { font-size: 13px; color: var(--muted); font-weight: 600; }
+.sc-date { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+
+/* Cuerpo de la tarjeta */
+.sc-body {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.sc-info-col { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+
+/* Insignias de estado (Badges) */
+.sc-badge {
+  align-self: flex-start;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.sc-badge.pendiente { background: rgba(234, 179, 8, 0.15); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.3); }
+.sc-badge.validacion { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
+.sc-badge.instalacion { background: rgba(201, 255, 47, 0.15); color: var(--lime); border: 1px solid rgba(201, 255, 47, 0.3); }
+.sc-badge.exitosa { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+.sc-badge.rechazada { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+/* Detalles (Dirección, etc) */
+.sc-detail { font-size: 12px; color: var(--muted); display: flex; align-items: flex-start; gap: 6px; line-height: 1.4; }
+
+/* Bloque tipo "Agenda de Instalación" */
+.sc-agenda-box {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 12px;
+  padding: 12px;
+  flex: 0.8;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+html[data-theme="light"] .sc-agenda-box { background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.05); }
+
+.sc-agenda-title { font-size: 11px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+.sc-agenda-text { font-size: 11px; color: var(--muted); }
+
+/* Footer de la tarjeta */
+.sc-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.sc-code { font-size: 12px; font-weight: 800; opacity: 0.6; }
+/* ======= FIX: Cards + KPI (restaura look original) ======= */
+
+.card{
+  border-radius: 24px;
+  padding: 22px;
+  position: relative;
+  overflow: hidden;
+}/* Texto KPI corporativo */
+.kpi-value {
+  font-size: 56px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  line-height: 1;
+  color: var(--text-main);
+}
+
+.kpi-value.small {
+  font-size: 44px;
+}
+
+.kpi-label {
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+/* Ocultamos la línea neón brillante */
+.glowline {
+  display: none;
+}
+/* Ajuste del card grande para que se vea como antes */
+.card-big{
+  align-items: flex-start;
+}
+/* ======= NUEVO LOGO WIFI MULTIRED ======= */
+.wifi-logo {
+  width: 120px; /* Tamaño fijo perfecto para el Splash */
+  height: 120px;
+  fill: none;
+  stroke-width: 10;
+  stroke-linecap: round;
+  overflow: visible;
+}
+
+/* Tamaño chiquito para el inicio de sesión */
+.wifi-logo.small {
+  width: 48px !important;
+  height: 48px !important;
+  margin-bottom: 5px; /* Lo separa un poquito de la palabra Multired */
+}
+/* Colores y resplandor (Efecto Neón) */
+.wifi-dot { fill: #22c55e; stroke: none; filter: drop-shadow(0 0 6px #22c55e); }
+.wifi-arc-1 { stroke: #3b82f6; filter: drop-shadow(0 0 6px #3b82f6); } /* Azul Movistar/Entel */
+.wifi-arc-2 { stroke: #c026d3; filter: drop-shadow(0 0 6px #c026d3); } /* Morado WOM */
+.wifi-arc-3 { stroke: #ef4444; filter: drop-shadow(0 0 6px #ef4444); } /* Rojo Claro */
+
+/* Modificación del Splash para quitar el cuadrado antiguo ("F") */
+.splash-logo {
+  width: 120px;
+  height: 120px;
+  display: grid;
+  place-items: center;
+  background: transparent !important; /* Quitamos el fondo */
+  border: none !important;            /* Quitamos el borde */
+  box-shadow: none !important;        /* Quitamos la sombra de la caja */
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  animation: popIn .65s ease forwards;
+}
+
+/* Texto de "Multired" con degradado usando los 4 colores */
+.multired-gradient {
+  background: linear-gradient(90deg, #ef4444, #c026d3, #3b82f6, #22c55e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+/* Estilos de la cabecera en el Modal de Login */
+.auth-header-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 18px 16px;
+  text-align: center;
+}
+.auth-header-logo h2 {
+  margin: 12px 0 4px;
+  font-size: 28px;
+  font-weight: 950;
+  letter-spacing: 0.5px;
+}
+.auth-subtitle {
+  margin: 0;
+  color: var(--muted);
+  font-weight: 700;
+  font-size: 15px;
+}
+/* Ajustes para el logo en la barra superior (Topbar) */
+.wifi-logo.topbar-logo {
+  width: 32px !important;
+  height: 32px !important;
+  margin-bottom: 0 !important;
+  flex-shrink: 0; /* ¡Agrega esto para que el ícono no se aplaste en celulares! */
+}
+
+.brand-bigtext.multired-gradient {
+  text-shadow: none !important; /* Quitamos la sombra verde antigua */
+  font-size: 26px; /* Lo ajustamos para que encaje perfecto con el ícono */
+}
+/* ======= ACCIONES RÁPIDAS DESTACADAS (TOPBAR) ======= */
+.btn-action {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 999px; /* Forma de píldora */
+  font-weight: 800;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.ico-action {
+  width: 18px;
+  height: 18px;
+}
+
+/* Botón Primario: Registrar Venta (Azul Brillante) */
+.btn-action.primary-neon {
+  background: #019DF4; /* Azul corporativo */
+  color: #ffffff; /* Letra blanca para que resalte */
+  border: 1px solid #019DF4;
+  box-shadow: 0 0 15px rgba(1, 157, 244, 0.35); /* Brillo azul sutil */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* Sombra suave al texto */
+  transition: all 0.2s ease;
+}
+
+.btn-action.primary-neon:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(1, 157, 244, 0.65); /* Brillo azul más intenso al pasar el mouse */
+  background: #1eb0fb; /* Un azul apenas más claro para dar efecto de luz */
+  border-color: #1eb0fb;
+}
+/* Botón Secundario: Revisar Factibilidad (Cristal) */
+.btn-action.secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.btn-action.secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Ajuste del botón secundario para el modo claro */
+html[data-theme="light"] .btn-action.secondary {
+  background: rgba(20, 30, 50, 0.05);
+  border-color: rgba(20, 30, 50, 0.15);
+  color: var(--text);
+}
+
+html[data-theme="light"] .btn-action.secondary:hover {
+  background: rgba(20, 30, 50, 0.1);
+}
+/* Botones Planos (Soporte y Ventas) */
+.btn-action.flat {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid transparent;
+}
+
+.btn-action.flat:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Ajuste de botones planos para modo claro */
+html[data-theme="light"] .btn-action.flat:hover {
+  background: rgba(20, 30, 50, 0.05);
+  color: var(--text);
+}
+/* ======= FIX PARA MANTENER TODOS LOS BOTONES EN UNA LÍNEA ======= */
+.toplinks {
+  flex-wrap: nowrap !important; /* Obliga a que nada se caiga a la segunda línea */
+  gap: 10px !important; /* Reduce un poquitito el espacio entre ellos para que quepan perfectos */
+}
+
+.btn-action {
+  white-space: nowrap !important; /* Evita que el texto dentro del botón se parta en dos */
+}
+/* ===================== MOBILE TOPBAR FIX (NO CAMBIA DISEÑO) ===================== */
+@media (max-width: 720px){
+
+  /* Topbar: pasa a 2 filas ordenadas */
+  .topnav{
+    width: calc(100% - 20px);
+    margin: 12px auto 0;
+    padding: 10px 12px;
+    border-radius: 22px;
+    gap: 10px;
+
+    /* clave: permitir “stack” */
+    flex-wrap: wrap;
+    justify-content: center;
+    top: 10px;
+  }
+
+  /* Brand arriba centrado */
+  .brand{
+    width: 100%;
+    min-width: 0;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  /* Acciones rápidas: estilo “barra desplazable” tipo iOS */
+  .toplinks.quick-actions{
+    width: 100%;
+    justify-content: flex-start;
+
+    /* en móvil: scroll horizontal elegante */
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding: 2px 2px 6px;
+    gap: 10px;
+
+    /* IMPORTANTE: en móvil no obligamos a que “quepa sí o sí” */
+    flex-wrap: nowrap !important;
+  }
+
+  /* Ocultar scrollbar (queda limpio) */
+  .toplinks.quick-actions::-webkit-scrollbar{ height: 0; }
+  .toplinks.quick-actions{ scrollbar-width: none; }
+
+  /* Botones: un poquito más compactos pero mismos estilos */
+  .btn-action{
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+  .ico-action{
+    width: 17px;
+    height: 17px;
+  }
+
+  /* Iconos derecha: abajo o al lado, pero sin chocar */
+  .topright{
+    width: 100%;
+    min-width: 0;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  /* ✅ Esto “corre hacia abajo” el contenido (incluye tu KPI grande 7,345) */
+  .shell{
+    width: calc(100% - 20px);
+    margin: 14px auto 0;
+  }
+
+  /* En móvil: sidebar + contenido en una columna (para que no se vea apretado) */
+  .shell{
+    grid-template-columns: 1fr;
+  }
+  .iconbar{
+    position: sticky;
+    top: 84px; /* queda bajo topbar */
+    z-index: 10;
+  }
+
+  /* KPI: leve ajuste para que no “grite” en móvil */
+  .kpi-value{
+    font-size: 44px;
+  }
+}
+/* ===================== MOBILE: ICONBAR SOLO ICONOS (como tu screenshot) ===================== */
+@media (max-width: 700px){
+
+  /* Barra lateral -> barra horizontal */
+  .iconbar{
+    top: 86px;                 /* bajo la topbar */
+    padding: 10px 10px;
+    gap: 12px;
+
+    flex-direction: row;
+    justify-content: flex-start;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+
+    z-index: 5;
+  }
+  .iconbar::-webkit-scrollbar{ height: 0; }
+  .iconbar{ scrollbar-width: none; }
+
+  /* Botones: cuadraditos/rounded, centrados, SOLO icono */
+  .iconbar .ibtn{
+    width: 56px;
+    height: 44px;
+    padding: 0;
+    border-radius: 14px;
+    justify-content: center;
+    align-items: center;
+    gap: 0;
+    transform: none;          /* evita saltos en móvil */
+  }
+
+  /* Icono tamaño cómodo */
+  .iconbar .ibtn .ico{
+    width: 22px;
+    height: 22px;
+  }
+
+  /* ❗ Ocultamos texto SIEMPRE en móvil */
+  .iconbar .ibtn-text{
+    display: none !important;
+  }
+
+  /* Por si tienes side-collapsed guardado: mantenemos el mismo tamaño */
+  body.side-collapsed .iconbar .ibtn{
+    width: 56px !important;
+    height: 44px !important;
+    padding: 0 !important;
+  }
+
+  /* Aire para que el KPI 7,345 no quede pegado */
+  .grid{ margin-top: 12px; }
+}
+/* ===================== MOBILE: TOPBAR ORDENADA (Multired centrado) ===================== */
+@media (max-width: 700px){
+
+  .topnav{
+    height: auto;
+    flex-wrap: wrap;
+    padding: 12px 12px;
+    gap: 10px;
+  }
+
+  /* Fila 1: Brand centrado real */
+  .brand{
+    width: 100%;
+    flex: 0 0 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    min-width: 0;
+  }
+
+  /* Botón volver fijo a la izquierda (ajusta si tu clase es distinta) */
+  .brand .back,
+  .brand .backbtn,
+  .brand .btn-back,
+  .brand .icon-back{
+    position: absolute;
+    left: 10px;
+  }
+
+  /* Logo + texto */
+  .brand img,
+  .brand .logo{
+    flex: 0 0 auto;
+  }
+
+  .brand .brand-name,
+  .brand .title,
+  .brand h1,
+  .brand .appname{
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  /* Fila 2: iconos del lado derecho centrados */
+  .topright{
+    width: 100%;
+    flex: 0 0 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 2px;
+  }
+}
+/* ===================== MOBILE TOPBAR: 1 SOLA LINEA, ORDENADA ===================== */
+@media (max-width: 700px){
+
+  /* Topbar SIEMPRE en una sola fila */
+  .topnav{
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 10px !important;
+    height: 58px !important;          /* compacta */
+    padding: 10px 12px !important;
+  }
+
+  /* Izquierda: solo el wifi (sin "Multired") */
+  .brand{
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-width: 0 !important;
+    gap: 10px !important;
+    justify-content: flex-start !important;
+  }
+
+  .brand .brand-bigtext{ display: none !important; }  /* oculta "Multired" */
+  .toplinks.quick-actions{ display: none !important; } /* oculta botones extra (si existen) */
+
+  /* Tamaño logo wifi */
+  .wifi-logo.topbar-logo{
+    width: 44px !important;
+    height: 44px !important;
+    flex: 0 0 auto !important;
+  }
+
+  /* Derecha: los iconos redondos SIEMPRE en línea */
+  .topright{
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-width: 0 !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 10px !important;
+  }
+
+  /* Evita que cualquier botón empuje o se vaya abajo */
+  .topright *{
+    flex: 0 0 auto !important;
+  }
+}
+/* ===================== BARRA DE ICONOS OSCURA ===================== */
+.iconbar.glass {
+  background: #0f1319 !important; /* Tono negro/gris muy oscuro */
+  border: 1px solid rgba(255, 255, 255, 0.05) !important; /* Borde más sutil */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important; /* Sombra fuerte */
+}
+
+/* Ajuste opcional para que los botones hagan mejor contraste */
+.iconbar .ibtn {
+  background: rgba(255, 255, 255, 0.03); 
+  border-color: rgba(255, 255, 255, 0.05);
+}
+.iconbar .ibtn.active {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+/* ===================== BARRA FLOTANTE Y BOTÓN DE CHAT (MÓVIL) ===================== */
+@media (max-width: 700px) {
+  /* 1. La barra de navegación (Pastilla flotante despegada) */
+  .iconbar.glass {
+    position: fixed !important;
+    top: auto !important;
+    bottom: 35px !important; /* <--- Despegada del fondo */
+    left: 50% !important;
+    transform: translateX(-50%) !important; /* La centra perfectamente */
+    width: calc(100% - 40px) !important; /* Separada de los lados izquierdo y derecho */
+    flex-direction: row !important;
+    justify-content: space-around !important;
+    border-radius: 999px !important; /* Redondeada total estilo pastilla */
+    padding: 8px 12px !important;
+    z-index: 99999 !important;
+    background: rgba(15, 19, 25, 0.85) !important; /* Oscura pero con un leve efecto cristal */
+    backdrop-filter: blur(15px) !important;
+    -webkit-backdrop-filter: blur(15px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+
+  /* 2. El botón de Soporte (💬) mucho más arriba */
+  .support-fab {
+    bottom: 115px !important; /* <--- Lo sube muy por encima de la barra */
+    right: 20px !important;
+    z-index: 99998 !important;
+  }
+
+  /* 3. La ventana de chat también sube para que no la tape la barra */
+  .support-panel {
+    bottom: 115px !important; 
+    z-index: 99998 !important;
+  }
+
+  /* 4. Espacio extra al final de la página para hacer scroll cómodo */
+  .main {
+    padding-bottom: 150px !important;
+  }
+
+  /* Forma circular de los botones por dentro */
+  .iconbar .ibtn {
+    width: 46px !important;
+    height: 46px !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 50% !important;
+  }
+  .iconbar .ibtn.active {
+    background: rgba(255, 255, 255, 0.15) !important;
+  }
+}
+/* ===================== OCULTAR FLECHA EN MÓVIL ===================== */
+@media (max-width: 700px) {
+  #btnSideToggle {
+    display: none !important;
+  }
+  
+  /* Esto ajusta el espacio para que el logo del WiFi quede bien alineado al borde sin la flecha */
+  .brand {
+    padding-left: 4px !important; 
+  }
+}
+/* ===================== MOSTRAR "MULTIRED" EN MÓVIL ===================== */
+@media (max-width: 700px) {
+  /* Hacemos que el texto vuelva a aparecer */
+  .brand .brand-bigtext { 
+    display: inline-block !important; 
+    font-size: 20px !important; /* Un poco más pequeño que en PC para que quepa perfecto */
+    margin-left: 4px !important; /* Separación sutil del logo WiFi */
+  }
+  
+  /* Achicamos un milímetro el logo WiFi para que haga buen juego con la letra */
+  .wifi-logo.topbar-logo {
+    width: 32px !important;
+    height: 32px !important;
+  }
+}
+/* ===================== BOTONES PRINCIPALES MÓVIL (MITAD Y MITAD) ===================== */
+.mobile-main-actions {
+  display: none; /* Oculto en PC por defecto */
+}
+
+@media (max-width: 700px) {
+  .mobile-main-actions {
+    display: flex !important;
+    grid-column: 1 / span 12 !important; /* Ocupa todo el ancho disponible */
+    gap: 12px !important; /* Separación clara entre los dos botones */
+    margin-bottom: 2px !important; /* Empuja la tarjeta de 7,345 suavemente hacia abajo */
+    width: 100%;
+  }
+
+  .mobile-main-actions .btn-action {
+    flex: 1 !important; /* Se dividen el espacio 50/50 exacto */
+    justify-content: center !important; /* Todo centradito como pediste */
+    padding: 16px 8px !important; /* Botones más gorditos, perfectos para el dedo */
+    border-radius: 18px !important;
+    font-size: 14px !important;
+  }
+  
+  /* Ajuste de emergencia por si el celular es muy angosto */
+  @media (max-width: 380px) {
+    .mobile-main-actions .btn-action {
+      font-size: 12px !important;
+      gap: 4px !important;
+    }
+  }
+}
+/* ============================= */
+/* SIDEBAR CENTRADO (FINAL PRO)  */
+/* ============================= */
+
+/* Queremos que el "píldora" mida SOLO lo necesario, pero centrado */
+.iconbar{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;   /* centra el grupo */
+  gap: 12px;
+
+  height: fit-content;       /* <-- clave: NO se estira */
+  min-height: unset;         /* <-- elimina el 560px */
+  max-height: unset;
+
+  padding: 14px 10px;
+}
+
+/* Asegura que nadie empuje hacia abajo */
+#btnSidePolicies{
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* No usamos spacer */
+.flex-spacer{ display: none !important; }
+/* --- Estilos Base para Escritorio (Texto Centrado) --- */
+.modal-tabs {
+  display: flex;
+  justify-content: flex-start;
+  gap: 12px;
+  margin-top: 20px;
+  margin-bottom: 25px;
+  padding: 0 4px;
+}
+
+.modal-tabs .tab {
+  flex: 0 0 auto;
+  min-width: 150px; /* Un poco más de ancho para que el texto respire */
+  height: 42px;    /* Altura fija para asegurar simetría total */
+  
+  /* Forzamos el centrado absoluto del texto */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  
+  padding: 0 20px !important;
+  border-radius: 999px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  border: 1px solid var(--border-light) !important;
+  background: var(--bg-app) !important;
+  color: var(--text-muted) !important;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap; /* Evita que el texto se rompa en dos líneas */
+}
+
+.modal-tabs .tab.active {
+  background: var(--brand-blue) !important;
+  color: white !important;
+  border-color: var(--brand-blue) !important;
+  box-shadow: 0 4px 12px rgba(1, 157, 244, 0.3);
+}
+
+/* --- 📱 CAMBIO EXCLUSIVO PARA MÓVIL (Simetría Perfecta) --- */
+@media (max-width: 700px) {
+  .modal-tabs {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 5px !important;
+    border-radius: 999px;
+    justify-content: space-between;
+    margin: 15px 10px 25px 10px !important;
+    gap: 5px !important;
+  }
+
+  .modal-tabs .tab {
+    flex: 1 !important;
+    min-width: 0 !important;
+    height: 40px !important; /* Altura cómoda para el dedo */
+    font-size: 13px !important;
+    padding: 0 5px !important;
+    border: none !important;
+    background: transparent !important;
+  }
+
+  .modal-tabs .tab.active {
+    background: var(--brand-blue) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  html[data-theme="light"] .modal-tabs {
+    background: rgba(0, 0, 0, 0.06);
+  }
+}
+/* ======= TARJETAS INTERACTIVAS (KPIs) ======= */
+.clickable-card {
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
+}
+
+.clickable-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(1, 157, 244, 0.15) !important;
+  border-color: var(--brand-blue) !important;
+}
+/* ===================== REDISEÑO TARJETAS DE VENTA (ESTILO MOVISTAR PRO) ===================== */
+.sales-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sale-card {
+  display: flex;
+  flex-direction: column;
+  padding: 0 !important; /* Quitamos el padding global para hacer bloques internos */
+  border-radius: 12px !important;
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-light) !important;
+  border-left: 6px solid var(--text-muted) !important; /* Borde izquierdo dinámico */
+  box-shadow: var(--shadow-sm) !important;
+  transition: all 0.2s ease !important;
+  overflow: hidden; /* Para que los bordes redondeados contengan los fondos */
+}
+
+.sale-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+}
+
+/* Colores de los bordes según estado */
+.sale-card.border-pendiente { border-left-color: #facc15 !important; }
+.sale-card.border-validacion { border-left-color: #38bdf8 !important; }
+.sale-card.border-instalacion { border-left-color: #c9ff2f !important; } /* Tu verde lima */
+.sale-card.border-exitosa { border-left-color: #22c55e !important; }
+.sale-card.border-rechazada { border-left-color: #ef4444 !important; }
+
+/* Encabezado de la Tarjeta */
+.sc-head-pro {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid var(--border-light);
+}
+html[data-theme="light"] .sc-head-pro { background: rgba(0, 0, 0, 0.02); }
+
+.sc-rut-pro { font-weight: 900; font-size: 15px; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
+.sc-date-pro { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+
+/* Cuerpo Dividido (Información Izquierda | Agenda Derecha) */
+.sc-body-pro {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr; /* 60% izquierda, 40% derecha */
+}
+
+.sc-info-left {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sc-row-id {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.sc-id-text { font-weight: 800; font-size: 14px; color: var(--text-main); }
+.sc-venta-tipo { font-size: 11px; font-weight: 800; color: var(--brand-blue); background: rgba(1, 157, 244, 0.1); padding: 4px 8px; border-radius: 4px; }
+
+.sc-address-box {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.sc-address-box svg { flex-shrink: 0; margin-top: 2px; color: var(--brand-blue); }
+
+/* Bloque Oscuro de Agenda (Estilo Referencia) */
+.sc-agenda-right {
+  background: rgba(10, 15, 25, 0.4); /* Fondo azul muy oscuro */
+  border-left: 1px solid var(--border-light);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+html[data-theme="light"] .sc-agenda-right { background: #f1f5f9; }
+
+.sc-agenda-title {
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--text-main);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.sc-agenda-content { font-size: 13px; color: var(--text-muted); font-weight: 600; line-height: 1.4; }
+.sc-agenda-content.highlight { color: #38bdf8; font-weight: 800; }
+
+/* Footer y Botón */
+.sc-foot-pro {
+  padding: 10px 16px;
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.sc-client-name { font-size: 13px; color: var(--text-muted); font-weight: 600; }
+
+/* Adaptación a Móviles (Se pone uno debajo de otro) */
+@media (max-width: 600px) {
+  .sc-body-pro { grid-template-columns: 1fr; }
+  .sc-agenda-right { border-left: none; border-top: 1px dashed var(--border-light); padding: 12px; }
+}
+/* ===================== BARRA DE FILTROS PREMIUM ===================== */
+.filter-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 16px;
+  margin-top: 14px;
+  margin-bottom: 24px;
+  background: rgba(255, 255, 255, 0.03); /* Fondo de cristal muy sutil */
+  border: 1px solid var(--border-light);
+}
+
+html[data-theme="light"] .filter-toolbar {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.search-wrapper {
+  flex: 1; /* Hace que la barra de búsqueda ocupe el espacio principal */
+  min-width: 250px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 14px;
+  width: 18px;
+  height: 18px;
+  color: var(--text-muted);
+  pointer-events: none; /* Para que no moleste al hacer clic */
+}
+
+.filter-input, .filter-select {
+  width: 100%;
+  background: var(--bg-app);
+  border: 1px solid var(--border-light);
+  color: var(--text-main);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.filter-input {
+  padding-left: 40px; /* Deja espacio para la lupita */
+}
+
+.filter-input:focus, .filter-select:focus {
+  border-color: var(--brand-blue);
+  box-shadow: 0 0 0 3px rgba(1, 157, 244, 0.15);
+}
+
+.filter-wrapper {
+  position: relative;
+  min-width: 200px;
+  display: flex;
+  align-items: center;
+}
+
+.filter-icon {
+  position: absolute;
+  left: 14px;
+  width: 16px;
+  height: 16px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.filter-select {
+  padding-left: 38px;
+  cursor: pointer;
+  appearance: none; /* Quita la flecha nativa fea del navegador */
+  -webkit-appearance: none;
+}
+
+/* Flechita personalizada para el select */
+.filter-wrapper::after {
+  content: "▼";
+  font-size: 10px;
+  color: var(--text-muted);
+  position: absolute;
+  right: 14px;
+  pointer-events: none;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Botón de exportar con toque verde (estilo Excel) */
+.export-btn {
+  color: #22c55e !important;
+  background: rgba(34, 197, 94, 0.08) !important;
+  border: 1px solid rgba(34, 197, 94, 0.2) !important;
+}
+.export-btn:hover {
+  background: rgba(34, 197, 94, 0.15) !important;
+  transform: translateY(-2px);
+}
+
+/* Adaptación para celular */
+@media (max-width: 700px) {
+  .filter-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 14px;
+  }
+  .search-wrapper, .filter-wrapper {
+    min-width: 100%;
+  }
+  .filter-actions {
+    justify-content: flex-end; /* Botones a la derecha en celular */
+  }
+}
+/* ===================== INDICADOR DE RED (MODO OFFLINE) ===================== */
+.offline-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(90deg, #ef4444, #f97316); /* Degradado Rojo a Naranja */
+  color: white;
+  text-align: center;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  z-index: 999999;
+  /* 🪄 LA MAGIA: Subimos -120% en lugar de -100% para esconderlo totalmente */
+  transform: translateY(-120%);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+}
+
+/* Clase que inyecta JS cuando se corta el internet */
+.offline-banner.show {
+  transform: translateY(0);
+}
+
+/* Empujamos suavemente la barra superior para que el banner no la tape */
+body.is-offline .topnav {
+  margin-top: 40px !important;
+  transition: margin-top 0.35s ease;
+}
+
+@media (max-width: 700px) {
+  body.is-offline .topnav { 
+    margin-top: 36px !important; 
+  }
+}
+/* ============================= */
+/* Autocomplete Direcciones */
+/* ============================= */
+.addr-sug{
+  margin-top: 8px;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 14px;
+  overflow: hidden;
+  background: rgba(20,24,32,.88);
+  box-shadow: 0 16px 40px rgba(0,0,0,.25);
+}
+html[data-theme="light"] .addr-sug{
+  background: rgba(255,255,255,.92);
+  box-shadow: 0 16px 40px rgba(0,0,0,.10);
+}
+.addr-sug button{
+  width: 100%;
+  text-align: left;
+  padding: 10px 12px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  color: var(--text);
+  font-weight: 700;
+}
+.addr-sug button:hover{
+  background: rgba(255,255,255,.08);
+}
+/* ===================== SISTEMA DE ROLES MULTIPLES ===================== */
+.admin-only, .backoffice-only, .staff-only { display: none !important; }
+
+/* 1. Vistas exclusivas de Supervisor (Admin) */
+body.is-admin .admin-only { display: inherit !important; }
+
+/* 2. Vistas exclusivas de BackOffice */
+body.is-backoffice .backoffice-only { display: inherit !important; }
+
+/* 3. Vistas compartidas (Admin + BackOffice) */
+body.is-admin .staff-only, body.is-backoffice .staff-only { display: inherit !important; }
+
+/* Flex overrides para mantener los botones y filas ordenados */
+body.is-admin .btn-action.admin-only, body.is-admin .action-card.admin-only,
+body.is-backoffice .btn-action.backoffice-only, body.is-backoffice .action-card.backoffice-only,
+body.is-admin div.field-row.staff-only, body.is-backoffice div.field-row.staff-only {
+    display: flex !important;
+}
+
+body.is-admin .freelancer-only, body.is-backoffice .freelancer-only {
+  display: none !important;
+}
+
+/* Botón Verde (BackOffice) */
+.btn-action.primary-green {
+  background: #22c55e;
+  color: #ffffff !important;
+  border: 1px solid #22c55e;
+  box-shadow: 0 0 15px rgba(34, 197, 94, 0.35);
+  font-weight: 800;
+  transition: all 0.2s ease;
+}
+.btn-action.primary-green:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(34, 197, 94, 0.65);
+  background: #4ade80;
+  border-color: #4ade80;
+}
+/* ===================== BARRA DE PROGRESO DE VENTA (TIMELINE) ===================== */
+.sale-timeline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  padding: 10px 0;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* La línea gris de fondo que conecta los círculos */
+.sale-timeline::before {
+  content: "";
+  position: absolute;
+  top: 26px; /* Centrado con los iconos */
+  left: 10%;
+  right: 10%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  z-index: 1;
+}
+
+html[data-theme="light"] .sale-timeline::before {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.timeline-step {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+/* El círculo de cada paso */
+.step-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 3px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--text-muted);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html[data-theme="light"] .step-icon {
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+.step-label {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+/* ESTADO 1: PASO ACTUAL (Activo - Azul) */
+.timeline-step.active .step-icon {
+  background: var(--brand-blue);
+  border-color: var(--brand-blue);
+  color: white;
+  box-shadow: 0 0 15px rgba(1, 157, 244, 0.4);
+  transform: scale(1.1);
+}
+.timeline-step.active .step-label { color: var(--brand-blue); }
+
+/* ESTADO 2: PASO COMPLETADO (Verde) */
+.timeline-step.completed .step-icon {
+  background: #22c55e;
+  border-color: #22c55e;
+  color: white;
+}
+.timeline-step.completed .step-label { color: #22c55e; }
+
+/* ESTADO 3: VENTA RECHAZADA (Rojo Alerta) */
+.timeline-step.rejected .step-icon {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: white;
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+  transform: scale(1.1);
+}
+.timeline-step.rejected .step-label { color: #ef4444; }
+/* 🔥 ESTILOS PARA EL BOTÓN DORADO DEL ADMIN 🔥 */
+
+/* Arreglo para que los botones de la barra superior no se peguen */
+.top-nav {
+  gap: 12px !important; /* Añade espacio entre los botones */
+  justify-content: flex-end; /* Alinea todo a la derecha */
+}
+
+.btn-gold-admin {
+  background: linear-gradient(135deg, #facc15 0%, #b48a04 100%); /* Degradado oro metálico */
+  color: #000 !important; /* Texto negro para contraste */
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px; /* Bordes redondeados profesionales */
+  font-weight: bold;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 5px rgba(250, 204, 21, 0.2); /* Sombra suave */
+  transition: 0.3s;
+  text-transform: uppercase; /* Texto en mayúsculas */
+  letter-spacing: 0.5px;
+}
+
+.btn-gold-admin:hover {
+  background: linear-gradient(135deg, #fbbf24 0%, #c29509 100%); /* Brillo al pasar el mouse */
+  transform: translateY(-1px); /* Se eleva ligeramente */
+  box-shadow: 0 4px 8px rgba(250, 204, 21, 0.4); /* Sombra más fuerte al hover */
+}
+
+/* Ajuste para que el ícono de corona se vea bien */
+.btn-gold-admin span {
+  font-size: 16px;
+}
+/* 🔥 BOTÓN FLOTANTE DE SOPORTE PARA ADMIN (ESTILO RUTS) 🔥 */
+.admin-support-fab {
+  bottom: 86px !important; 
+  background: linear-gradient(135deg, #facc15 0%, #b48a04 100%) !important;
+  border: none !important;
+  box-shadow: 0 10px 25px rgba(250, 204, 21, 0.4) !important;
+  z-index: 99998 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+}
+
+.admin-support-fab:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 14px 28px rgba(250, 204, 21, 0.6) !important;
+}
+
+/* Estilo del ícono vectorial RUTS */
+.ruts-icon {
+  width: 38px;
+  height: 38px;
+  color: #0f172a; /* Azul muy oscuro para que contraste perfecto con el oro */
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Efecto al pasar el mouse (La flecha gira) */
+.admin-support-fab:hover .ruts-icon {
+  transform: rotate(30deg) scale(1.1);
+}
+
+@media (max-width: 700px) {
+  .admin-support-fab {
+    bottom: 185px !important; 
+  }
+}
+/* Botón Panel de Supervisor (Estilo Sólido Dorado tipo Registrar Venta) */
+.btn-action.primary-gold {
+  background: #facc15; /* Dorado sólido */
+  color: #111827 !important; /* Texto negro/oscuro para máximo contraste */
+  border: 1px solid #facc15;
+  box-shadow: 0 0 15px rgba(250, 204, 21, 0.35); /* Resplandor dorado */
+  font-weight: 800;
+  transition: all 0.2s ease;
+}
+
+.btn-action.primary-gold:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(250, 204, 21, 0.65); /* Resplandor más fuerte al pasar el mouse */
+  background: #fde047; /* Se aclara un poco */
+  border-color: #fde047;
+}
+/* ======= TIMELINE MINIATURA (PARA TARJETAS DE VENTA) ======= */
+.mini-timeline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 280px;
+  margin: 0 auto;
+  position: relative;
+}
+.mini-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  z-index: 2;
+  width: 70px;
+}
+.mini-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--text-muted);
+  transition: all 0.3s ease;
+}
+html[data-theme="light"] .mini-icon { border-color: rgba(0, 0, 0, 0.15); }
+
+.mini-label {
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+.mini-line {
+  flex: 1;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 0 -15px;
+  margin-top: -18px; /* Sube la línea para conectar los círculos */
+  z-index: 1;
+  border-radius: 2px;
+  transition: background 0.3s;
+}
+html[data-theme="light"] .mini-line { background: rgba(0, 0, 0, 0.08); }
+
+/* Estados Activos */
+.mini-step.active .mini-icon {
+  background: var(--brand-blue);
+  border-color: var(--brand-blue);
+  color: white;
+  box-shadow: 0 0 10px rgba(1, 157, 244, 0.4);
+}
+.mini-step.active .mini-label { color: var(--brand-blue); }
+
+/* Estados Completados */
+.mini-step.completed .mini-icon { background: #22c55e; border-color: #22c55e; color: white; }
+.mini-step.completed .mini-label { color: #22c55e; }
+.mini-line.completed { background: #22c55e; }
+
+/* Estado Rechazado */
+.mini-step.rejected .mini-icon {
+  background: #ef4444; border-color: #ef4444; color: white;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+}
+.mini-step.rejected .mini-label { color: #ef4444; }
+/* ===================== CARGA FANTASMA (SKELETON) ===================== */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-card {
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.skeleton-anim {
+  /* Fondo base con el brillo pasando por encima */
+  background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+  border-radius: 6px;
+}
+
+/* Adaptación para el modo claro */
+html[data-theme="light"] .skeleton-anim {
+  background: linear-gradient(90deg, rgba(0,0,0,0.04) 25%, rgba(0,0,0,0.08) 50%, rgba(0,0,0,0.04) 75%);
+  background-size: 200% 100%;
+}
+
+.sk-head { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.sk-line { height: 14px; width: 40%; }
+.sk-line.short { width: 20%; }
+.sk-line.long { width: 70%; height: 12px; }
+.sk-body { display: grid; grid-template-columns: 1.5fr 1fr; gap: 16px; }
+.sk-box { height: 80px; width: 100%; border-radius: 8px; }
+
+@media (max-width: 600px) {
+  .sk-body { grid-template-columns: 1fr; }
+}
+/* ===================== ACADEMIA ESTILO NETFLIX ===================== */
+/* ===================== ACADEMIA ESTILO NETFLIX (CORREGIDO) ===================== */
+.cap-grid {
+  display: flex;
+  overflow-x: auto; /* Permite el movimiento lateral */
+  overflow-y: hidden; /* Evita scroll vertical molesto */
+  gap: 20px;
+  padding: 20px 4px 30px 4px; /* Un poco más de aire abajo */
+  scrollbar-width: thin; /* Barra delgada para Firefox */
+  scrollbar-color: var(--brand-blue) transparent;
+  scroll-behavior: smooth; /* Para que el movimiento sea fluido */
+  -webkit-overflow-scrolling: touch; /* Suavidad extra en iPhone/Android */
+}
+
+/* Diseñamos la barra de desplazamiento para que sea elegante y no moleste */
+.cap-grid::-webkit-scrollbar {
+  height: 6px; /* Barra delgadita abajo */
+}
+
+.cap-grid::-webkit-scrollbar-thumb {
+  background: var(--brand-blue); /* Color azul Movistar */
+  border-radius: 10px;
+}
+
+.cap-grid::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.cap-card {
+  flex: 0 0 280px; /* IMPORTANTE: evita que las tarjetas se achiquen para caber */
+  background: #141414;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.cap-card:hover {
+  transform: scale(1.05);
+  z-index: 10;
+  border-color: var(--brand-blue);
+}
+
+.cap-thumb {
+  width: 100%;
+  height: 135px; /* Proporción 16:9 de serie */
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: flex-end;
+  padding: 10px;
+  position: relative;
+}
+
+.cap-thumb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, transparent 60%);
+}
+
+.cap-badge-netflix {
+  position: relative;
+  z-index: 2;
+  background: var(--brand-blue);
+  color: white;
+  font-size: 10px;
+  font-weight: 900;
+  padding: 2px 6px;
+  border-radius: 2px;
+  text-transform: uppercase;
+}
+
+.cap-info-netflix {
+  padding: 12px;
+}
+
+.cap-title-netflix {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cap-btn-netflix {
+  width: 100%;
+  padding: 8px;
+  background: white;
+  color: black;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.cap-btn-netflix:hover {
+  background: #e6e6e6;
+}
+/* ===== Micro-interacciones premium ===== */
+.btn, .primary, .icon-btn, .user, .ibtn, .action-card{
+  transition: transform .14s ease, box-shadow .18s ease, background-color .18s ease, border-color .18s ease, color .18s ease;
+}
+
+.btn:active, .primary:active, .icon-btn:active, .user:active{
+  transform: translateY(1px) scale(.99);
+}
+
+.glass:hover{
+  box-shadow: 0 10px 30px rgba(0,0,0,.25);
+}
+/* ===== Transición entre vistas ===== */
+.view{
+  animation: viewIn .18s ease;
+}
+@keyframes viewIn{
+  from{ opacity: 0; transform: translateY(4px); }
+  to{ opacity: 1; transform: translateY(0); }
+}
+/* ===== Señal de estado sutil ===== */
+.sale-card[data-status="Validación"]{ border-left: 4px solid rgba(34,197,94,.55); }
+.sale-card[data-status="Instalación"]{ border-left: 4px solid rgba(1,157,244,.65); }
+.sale-card[data-status="Exitosa"]{ border-left: 4px solid rgba(34,197,94,.95); }
+.sale-card[data-status="Rechazada"]{ border-left: 4px solid rgba(239,68,68,.85); }
+.sale-card{
+  transition: border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+}
+.sale-card:hover{ transform: translateY(-1px); }
+/* ===== Toast tipos ===== */
+.toast{ border-left: 4px solid rgba(1,157,244,.65); }
+.toast-success{ border-left-color: rgba(34,197,94,.85); }
+.toast-warning{ border-left-color: rgba(234,179,8,.85); }
+.toast-danger{ border-left-color: rgba(239,68,68,.85); }
+/* ===== Empty state ===== */
+.empty{
+  padding: 26px;
+  border-radius: 18px;
+  border: 1px dashed rgba(255,255,255,.16);
+  background: rgba(255,255,255,.04);
+  color: var(--muted);
+  text-align: center;
+}
+html[data-theme="light"] .empty{
+  border-color: rgba(15,20,30,.14);
+  background: rgba(15,20,30,.03);
+}
+.empty .ico{ font-size: 28px; margin-bottom: 8px; }
+.empty .t{ font-weight: 900; color: var(--text); margin-bottom: 6px; }
+.empty .s{ font-weight: 650; }
+/* ===== Chips estado ===== */
+.chip-status{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 900;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+}
+.chip-status .dot{
+  width:8px; height:8px; border-radius: 50%;
+}
+.chip-status[data-s="Validación"] .dot{ background: rgba(34,197,94,.9); }
+.chip-status[data-s="Instalación"] .dot{ background: rgba(1,157,244,.95); }
+.chip-status[data-s="Exitosa"] .dot{ background: rgba(34,197,94,.95); }
+.chip-status[data-s="Rechazada"] .dot{ background: rgba(239,68,68,.95); }
+/* ===== Chips estado ===== */
+.chip-status{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 900;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+}
+.chip-status .dot{
+  width:8px; height:8px; border-radius: 50%;
+}
+.chip-status[data-s="Validación"] .dot{ background: rgba(34,197,94,.9); }
+.chip-status[data-s="Instalación"] .dot{ background: rgba(1,157,244,.95); }
+.chip-status[data-s="Exitosa"] .dot{ background: rgba(34,197,94,.95); }
+.chip-status[data-s="Rechazada"] .dot{ background: rgba(239,68,68,.95); }
+/* ===== KPI Animación Premium ===== */
+.kpi-value{
+  transition: transform .25s ease, text-shadow .25s ease;
+}
+
+.kpi-up{
+  transform: scale(1.08);
+  text-shadow: 0 0 14px rgba(34,197,94,.7);
+}
+/* ===================== BOTONES DE SELECCIÓN DE PRODUCTO ===================== */
+.prod-toggle-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.prod-toggle {
+  flex: 1;
+  min-width: 110px;
+  cursor: pointer;
+  position: relative;
+}
+.prod-toggle input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.prod-toggle span {
+  display: block;
+  text-align: center;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-light);
+  background: var(--bg-app);
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+.prod-toggle input:checked + span {
+  background: var(--brand-blue);
+  color: white;
+  border-color: var(--brand-blue);
+  box-shadow: 0 4px 12px rgba(1, 157, 244, 0.3);
+  transform: translateY(-2px);
+}
+/* ===================== PARCHE DE SEGURIDAD PARA PESTAÑAS ===================== */
+/* Obliga a ocultar los botones admin del menú de pestañas si el usuario no es jefe */
+body:not(.is-admin) .modal-tabs .tab.admin-only {
+  display: none !important;
+}
+/* ==========================================================================
+   REDISEÑO DE SELECTS (Región, Comuna, etc.)
+   ========================================================================== */
+
+select.field {
+  /* Ocultamos la flecha fea nativa del sistema operativo */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  
+  /* Creamos nuestra propia flecha moderna con SVG */
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%2338bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 18px;
+  
+  /* Espaciado para que el texto no pise la flecha */
+  padding-right: 40px;
+  
+  /* Colores modernos adaptados al Dark Mode */
+  background-color: rgba(255, 255, 255, 0.04);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+/* Efecto al pasar el mouse */
+select.field:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(56, 189, 248, 0.4); /* Brillo azul claro */
+}
+
+/* Efecto al hacer clic/abrir */
+select.field:focus {
+  outline: none;
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Cuando la caja está desactivada (ej: esperando que elijas región) */
+select.field:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%236b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+}
+
+/* Fondo oscuro para las opciones de la lista desplegable */
+select.field option {
+  background-color: #0B0F19; /* Tu color de fondo */
+  color: #ffffff;
+  padding: 12px;
+  font-size: 14px;
+}

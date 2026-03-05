@@ -1,0 +1,1404 @@
+<!-- BETA.HTML -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Multired - Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ✅ ANTI-FLICKER: aplica tema ANTES de cargar CSS -->
+  <script>
+    (function() {
+      try {
+        const mode = localStorage.getItem("theme_mode") || "system";
+        const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const resolved = (mode === "system") ? (prefersDark ? "dark" : "light") : mode;
+        document.documentElement.setAttribute("data-theme", resolved);
+        document.documentElement.setAttribute("data-theme-mode", mode);
+      } catch(e) {}
+    })();
+  </script>
+<meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Multired">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0B0F19">
+  <link rel="stylesheet" href="styles.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons/css/flag-icons.min.css">
+  
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+</head>
+
+<body>
+  <div class="bg"></div>
+
+  <!-- ✅ TOASTS -->
+  <div class="toast-wrap" id="toastWrap" aria-live="polite" aria-atomic="true"></div>
+
+  <div id="offlineBanner" class="offline-banner">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.53 5.53l8.94 8.94M1.5 1.5l21 21M9.9 9.92a5 5 0 0 0-3.54 1.41L2 15.69a10 10 0 0 1 4.54-2.81M14.1 14.12a5 5 0 0 1-3.54 1.41L6.2 19.89a10 10 0 0 0 10.61 0l-2.71-2.76z"></path></svg>
+    <span>Sin conexión. Trabajando en Modo Local.</span>
+  </div>
+
+  <div class="splash" id="splash">
+    <div class="splash-inner">
+      <div class="splash-logo">
+        <svg class="wifi-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <path class="wifi-arc-3" d="M 2 32 A 68 68 0 0 1 98 32" />
+          <path class="wifi-arc-2" d="M 17.5 47.5 A 46 46 0 0 1 82.5 47.5" />
+          <path class="wifi-arc-1" d="M 33 63 A 24 24 0 0 1 67 63" />
+          <circle class="wifi-dot" cx="50" cy="80" r="8" />
+        </svg>
+      </div>
+      <div class="splash-title multired-gradient">Multired</div>
+    </div>
+  </div>
+  <!-- LOGIN / REGISTER -->
+  <div class="modal-backdrop" id="loginBackdrop" style="display:none;">
+    <div class="modal glass auth-modal" role="dialog" aria-modal="true" style="max-width:560px;">
+      <div class="auth-header-logo">
+        <svg class="wifi-logo small" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <path class="wifi-arc-3" d="M 2 32 A 68 68 0 0 1 98 32" />
+          <path class="wifi-arc-2" d="M 17.5 47.5 A 46 46 0 0 1 82.5 47.5" />
+          <path class="wifi-arc-1" d="M 33 63 A 24 24 0 0 1 67 63" />
+          <circle class="wifi-dot" cx="50" cy="80" r="8" />
+        </svg>
+        <h2 class="multired-gradient">Multired</h2>
+        <p id="authTitle" class="auth-subtitle">Iniciar sesión</p>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tabLogin" type="button">Iniciar sesión</button>
+        <button class="auth-tab" id="tabRegister" type="button">Registrarse</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- LOGIN -->
+        <div id="loginPane">
+          <label class="field-label">Usuario o correo</label>
+          <input class="field" id="loginUser" type="text" placeholder="admin o correo@ejemplo.com" autocomplete="username"/>
+
+          <div style="height:12px;"></div>
+
+          <label class="field-label">Contraseña</label>
+          <input class="field" id="loginPass" type="password" placeholder="••••••••" autocomplete="current-password"/>
+
+          <div class="auth-row" style="margin-top:10px;">
+            <button class="linkbtn" id="btnForgotPass" type="button">Olvidé mi contraseña</button>
+          </div>
+
+          <div style="height:14px;"></div>
+
+          <button class="primary" id="btnLogin" type="button" style="width:100%;">Entrar</button>
+
+          <p class="hint" style="margin-top:12px;">
+           
+          </p>
+        </div>
+
+        <!-- REGISTER -->
+        <div id="registerPane" style="display:none;">
+          <div class="form-grid auth-grid">
+            <div class="form-field">
+              <label>Nombres</label>
+              <input class="field" id="regNombres" type="text" placeholder="Ej: Juan Ignacio" />
+            </div>
+
+            <div class="form-field">
+              <label>Apellidos</label>
+              <input class="field" id="regApellidos" type="text" placeholder="Ej: Pérez Silva" />
+            </div>
+
+            <div class="form-field">
+              <label>RUT (Chile)</label>
+              <input class="field" id="regRut" type="text" placeholder="Ej: 12.345.678-9" />
+              <div class="mini-hint">Se valida formato + dígito verificador</div>
+            </div>
+
+           <div class="form-field">
+              <label>Nacionalidad</label>
+              <div class="field" style="display: flex; align-items: center; gap: 8px; padding: 0 10px;">
+                <span id="iconRegCountry" class="fi fi-cl" style="border-radius: 2px; font-size: 16px;"></span>
+                <select id="regCountry" style="border: none; outline: none; background: transparent; flex: 1; color: var(--text-main); font-size: 14px; width: 100%; cursor: pointer;">
+                  <option value="Chile" data-iso="cl" selected>Chile</option>
+                  <option value="Argentina" data-iso="ar">Argentina</option>
+                  <option value="Bolivia" data-iso="bo">Bolivia</option>
+                  <option value="Brasil" data-iso="br">Brasil</option>
+                  <option value="Colombia" data-iso="co">Colombia</option>
+                  <option value="Costa Rica" data-iso="cr">Costa Rica</option>
+                  <option value="Cuba" data-iso="cu">Cuba</option>
+                  <option value="Ecuador" data-iso="ec">Ecuador</option>
+                  <option value="El Salvador" data-iso="sv">El Salvador</option>
+                  <option value="Guatemala" data-iso="gt">Guatemala</option>
+                  <option value="Honduras" data-iso="hn">Honduras</option>
+                  <option value="México" data-iso="mx">México</option>
+                  <option value="Nicaragua" data-iso="ni">Nicaragua</option>
+                  <option value="Panamá" data-iso="pa">Panamá</option>
+                  <option value="Paraguay" data-iso="py">Paraguay</option>
+                  <option value="Perú" data-iso="pe">Perú</option>
+                  <option value="República Dominicana" data-iso="do">Rep. Dominicana</option>
+                  <option value="Uruguay" data-iso="uy">Uruguay</option>
+                  <option value="Venezuela" data-iso="ve">Venezuela</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-field wide">
+              <label>Teléfono</label>
+              <div style="display: flex; gap: 8px;">
+                <div class="field" style="display: flex; align-items: center; gap: 8px; padding: 0 10px; width: 110px;">
+                  <span id="iconRegPhone" class="fi fi-cl" style="border-radius: 2px; font-size: 16px;"></span>
+                  <select id="regPhoneCode" style="border: none; outline: none; background: transparent; flex: 1; color: var(--text-main); font-size: 14px; width: 100%; cursor: pointer; padding: 0;">
+                    <option value="+56" data-iso="cl" selected>+56</option>
+                    <option value="+54" data-iso="ar">+54</option>
+                    <option value="+591" data-iso="bo">+591</option>
+                    <option value="+55" data-iso="br">+55</option>
+                    <option value="+57" data-iso="co">+57</option>
+                    <option value="+506" data-iso="cr">+506</option>
+                    <option value="+53" data-iso="cu">+53</option>
+                    <option value="+593" data-iso="ec">+593</option>
+                    <option value="+503" data-iso="sv">+503</option>
+                    <option value="+502" data-iso="gt">+502</option>
+                    <option value="+504" data-iso="hn">+504</option>
+                    <option value="+52" data-iso="mx">+52</option>
+                    <option value="+505" data-iso="ni">+505</option>
+                    <option value="+507" data-iso="pa">+507</option>
+                    <option value="+595" data-iso="py">+595</option>
+                    <option value="+51" data-iso="pe">+51</option>
+                    <option value="+1" data-iso="do">+1</option>
+                    <option value="+598" data-iso="uy">+598</option>
+                    <option value="+58" data-iso="ve">+58</option>
+                  </select>
+                </div>
+                <input class="field" id="regPhoneNum" type="tel" placeholder="9 1234 5678" style="flex: 1;" />
+              </div>
+            </div>
+            <div class="form-field wide">
+              <label>Correo</label>
+              <input class="field" id="regEmail" type="email" placeholder="correo@ejemplo.com" autocomplete="email" />
+            </div>
+
+            <div class="form-field wide">
+              <label>Contraseña</label>
+              <input class="field" id="regPass" type="password" placeholder="Mín. 8, 1 mayúscula, 1 número" autocomplete="new-password" />
+              <div class="mini-hint">Reglas: 8+ caracteres, 1 mayúscula, 1 número</div>
+            </div>
+
+            <div class="form-field wide" style="background: rgba(1, 157, 244, 0.05); padding: 12px; border-radius: 8px; border: 1px dashed var(--brand-blue);">
+              <label style="color: var(--brand-blue);">Foto Carnet (Frente)</label>
+              <input class="field" id="regCarnetFrente" type="file" accept="image/*" />
+              
+              <div style="height: 10px;"></div>
+              
+              <label style="color: var(--brand-blue);">Foto Carnet (Dorso)</label>
+              <input class="field" id="regCarnetDorso" type="file" accept="image/*" />
+              <div class="mini-hint">Obligatorio para validar tu identidad como ejecutivo.</div>
+            </div>
+
+            <div class="form-field wide">
+              <label class="checkline">
+                <input type="checkbox" id="regTerms" />
+                <span>Acepto Términos y Privacidad</span>
+              </label>
+            </div>
+          </div>
+
+          <div style="height:14px;"></div>
+
+          <button class="primary" id="btnRegister" type="button" style="width:100%;">Crear cuenta</button>
+
+          <p class="hint" style="margin-top:12px;">
+            (Demo: registro local + verificación por código)
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: VERIFICACIÓN CORREO (DEMO) -->
+  <div class="modal-backdrop" id="verifyBackdrop" style="display:none;">
+    <div class="modal glass" role="dialog" aria-modal="true" style="max-width:520px;">
+      <div class="modal-head">
+        <h3>Confirmar correo (demo)</h3>
+        <button class="icon-btn" id="btnCloseVerify" title="Cerrar">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="hint" style="margin:0;">
+          Te enviamos un código de 6 dígitos (demo). Escribe el código para activar la cuenta.
+        </p>
+        <div style="height:12px;"></div>
+        <label class="field-label">Código (6 dígitos)</label>
+        <input class="field" id="verifyCodeInput" type="text" inputmode="numeric" placeholder="123456" maxlength="6" />
+        <div class="mini-hint" id="verifyHint"></div>
+        <div style="height:14px;"></div>
+        <button class="primary" id="btnVerifyCode" type="button" style="width:100%;">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: OLVIDÉ CONTRASEÑA (DEMO) -->
+  <div class="modal-backdrop" id="forgotBackdrop" style="display:none;">
+    <div class="modal glass" role="dialog" aria-modal="true" style="max-width:520px;">
+      <div class="modal-head">
+        <h3>Recuperar contraseña (demo)</h3>
+        <button class="icon-btn" id="btnCloseForgot" title="Cerrar">✕</button>
+      </div>
+      <div class="modal-body">
+        <label class="field-label">Correo</label>
+        <input class="field" id="forgotEmail" type="email" placeholder="correo@ejemplo.com" />
+        <div style="height:12px;"></div>
+
+        <label class="field-label">Nuevo password</label>
+        <input class="field" id="forgotNewPass" type="password" placeholder="Mín. 8, 1 mayúscula, 1 número" />
+
+        <div style="height:14px;"></div>
+        <button class="primary" id="btnDoForgot" type="button" style="width:100%;">Actualizar (demo)</button>
+        <p class="hint" style="margin-top:10px;">(Demo) Cambia la clave localmente si existe el correo.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOP NAV -->
+ <header class="topnav glass">
+    <div class="brand">
+      <button class="side-toggle icon-btn" id="btnSideToggle" type="button" aria-label="Mostrar/Ocultar barra lateral" title="Mostrar/Ocultar barra lateral">
+        <span class="chev">❮</span>
+      </button>
+      
+      <svg class="wifi-logo topbar-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <path class="wifi-arc-3" d="M 2 32 A 68 68 0 0 1 98 32" />
+        <path class="wifi-arc-2" d="M 17.5 47.5 A 46 46 0 0 1 82.5 47.5" />
+        <path class="wifi-arc-1" d="M 33 63 A 24 24 0 0 1 67 63" />
+        <circle class="wifi-dot" cx="50" cy="80" r="8" />
+      </svg>
+      <div class="brand-bigtext multired-gradient">Multired</div>
+    </div>
+
+    <nav class="toplinks quick-actions">
+      <button class="btn-action secondary" id="btnFactibilidad">
+        <svg viewBox="0 0 24 24" class="ico-action" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        Revisar Factibilidad
+      </button>
+      
+      <button class="btn-action primary-neon" id="btnTopRegistrarVenta">
+        <svg viewBox="0 0 24 24" class="ico-action" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Registrar Venta
+      </button>
+
+   <button class="btn-action flat freelancer-only" id="btnTopSoporte">
+        🛟 Soporte
+      </button>
+      
+      <button class="btn-action flat freelancer-only" id="btnTopVentas">
+        💲 Ventas
+      </button>
+
+   <button class="btn-action primary-gold admin-only" id="btnTopAdminPanel">
+            Panel de Supervisor
+        </button>
+        <button class="btn-action primary-green backoffice-only" id="btnTopBackofficePanel">
+            Panel BackOffice
+        </button>
+        </nav>
+
+    <div class="topright">
+      <button class="pill icon-btn" id="btnTopAvisos" title="Avisos" style="position: relative;">
+        <svg viewBox="0 0 24 24" style="width:18px; height:18px;" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8a6 6 0 10-12 0c0 7-3 7-3 7h18s-3 0-3-7"></path>
+          <path d="M13.7 21a2 2 0 01-3.4 0"></path>
+        </svg>
+        <span class="badge" id="avisosBadge" style="display:none; top:-2px; right:-2px; width:16px; height:16px; font-size:10px;">!</span>
+      </button>
+
+      <button class="pill icon-btn" id="btnValidator" title="Validador">✔</button>
+
+      <button class="user" title="Perfil" id="btnUserMenu" type="button">
+        <span class="dot"></span>
+        <span class="avatar">👤</span>
+      </button>
+
+      <div class="user-menu glass" id="userMenu" style="display:none;">
+        <div class="user-menu-top">
+          <div class="user-menu-avatar">👤</div>
+          <div class="user-menu-meta">
+            <div class="user-menu-name" id="profileName">—</div>
+            <div class="user-menu-role" id="profileRole">—</div>
+          </div>
+        </div>
+
+        <button class="user-menu-item" id="btnProfileInfo" type="button">
+          <span class="umi-ico">👤</span>
+          <span>Información de perfil</span>
+        </button>
+
+        <button class="user-menu-item" id="btnProfileSecurity" type="button">
+          <span class="umi-ico">🔒</span>
+          <span>Seguridad</span>
+        </button>
+
+        <div class="user-menu-sep"></div>
+
+        <button class="user-menu-item danger" id="btnLogout" type="button">
+          <span class="umi-ico">↩</span>
+          <span>Salir</span>
+        </button>
+
+        <button class="user-menu-item danger" id="btnLogoutAll" type="button">
+          <span class="umi-ico">⛔</span>
+          <span>Cerrar sesión en todos</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="shell">
+    <!-- SIDEBAR -->
+    <aside class="iconbar glass" id="sidebar">
+      <button class="ibtn active" title="Inicio" aria-label="Inicio" id="btnSidePanel">
+        <svg viewBox="0 0 24 24" class="ico" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 10.5L12 3l9 7.5"></path>
+          <path d="M5 10v10h14V10"></path>
+        </svg>
+        <span class="ibtn-text">Inicio</span>
+      </button>
+
+      <button class="ibtn" title="Capacitaciones" aria-label="Capacitaciones" id="btnSideCapacitaciones">
+        <svg viewBox="0 0 24 24" class="ico" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+          <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+        </svg>
+        <span class="ibtn-text">Capacitaciones</span>
+      </button>
+
+      <button class="ibtn" title="Ventas realizadas" aria-label="Ventas realizadas" id="btnSideCart">
+        <svg viewBox="0 0 24 24" class="ico" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 6h15l-2 9H7L6 6Z"></path>
+          <path d="M6 6L5 3H2"></path>
+          <circle cx="9" cy="20" r="1"></circle>
+          <circle cx="17" cy="20" r="1"></circle>
+        </svg>
+        <span class="ibtn-text">Ventas</span>
+      </button>
+
+      <button class="ibtn" title="Soporte/Tickets" aria-label="Soporte/Tickets" id="btnSideSupport">
+        <svg viewBox="0 0 24 24" class="ico" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"></path>
+        </svg>
+        <span class="ibtn-text">Soporte</span>
+      </button>
+
+      <button class="ibtn" title="Documentos" aria-label="Documentos" id="btnSideDocs">
+        <svg viewBox="0 0 24 24" class="ico" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path>
+          <path d="M14 2v6h6"></path>
+        </svg>
+        <span class="ibtn-text">Documentos</span>
+      </button>
+
+     <div class="flex-spacer"></div>
+
+      <button class="ibtn" title="Políticas y Condiciones" aria-label="Políticas y Condiciones" id="btnSidePolicies">
+        <svg viewBox="0 0 24 24" class="ico" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path>
+          <path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path>
+          <path d="M7 21h10"></path>
+          <path d="M12 3v18"></path>
+          <path d="M3 7h18"></path>
+        </svg>
+        <span class="ibtn-text">Políticas</span>
+      </button>
+
+      <button class="ibtn" title="Ajustes" aria-label="Ajustes" id="btnSideSettings">
+        <svg viewBox="0 0 24 24" class="ico" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+        <span class="ibtn-text">Ajustes</span>
+      </button>
+    </aside>
+    <!-- MAIN -->
+    <main class="main">
+      <!-- DASHBOARD -->
+      <section class="grid view" id="viewDashboard">
+        
+        <div class="mobile-main-actions">
+          <button class="btn-action secondary" id="btnFactibilidadMovil">
+            <svg viewBox="0 0 24 24" class="ico-action" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            Factibilidad
+          </button>
+          
+          <button class="btn-action primary-neon" id="btnRegistrarVentaMovil">
+            <svg viewBox="0 0 24 24" class="ico-action" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Nueva Venta
+          </button>
+        </div>
+
+        <article class="card glass card-big clickable-card" id="cardInstaladas" title="Ver ventas instaladas">
+          <div class="kpi-value">7,345</div>
+          <div class="kpi-label">Instaladas</div>
+          <div class="glowline"></div>
+        </article>
+
+        <article class="card glass chart">
+          <div class="chart-head">
+            <div class="chart-title">Pagadas</div>
+            <div class="chip">Mes actual</div>
+          </div>
+
+          <div id="salesChart" style="min-height: 320px; margin-top: 15px; width: 100%;"></div>
+        </article>
+
+        <article class="card glass clickable-card" id="cardTickets" title="Ver tickets de soporte">
+          <div class="kpi-value small" id="kpiTickets">0</div>
+          <div class="kpi-label">Tickets nuevos</div>
+          <div class="glowline"></div>
+        </article>
+
+        <article class="card glass clickable-card" id="cardVentasTotales" title="Ver todas las ventas">
+          <div class="kpi-value small" id="kpiVentas">0</div>
+          <div class="kpi-label">Ventas totales</div>
+          <div class="glowline"></div>
+        </article>
+
+        <article class="card glass clickable-card" id="cardReagendadas" title="Ver agenda">
+          <div class="kpi-value small">45</div>
+          <div class="kpi-label">Reagendada</div>
+          <div class="glowline"></div>
+        </article>
+
+        <article class="card glass clickable-card" id="cardPendientes" title="Ver ventas pendientes">
+          <div class="kpi-value small" id="kpiPendientes">0</div>
+          <div class="kpi-label">Ventas pendientes</div>
+          <div class="glowline"></div>
+        </article>
+      </section>
+
+      <!-- BUSCAR -->
+     <section class="page view" id="viewCapacitaciones" style="display:none; padding: 0 20px;">
+        <div class="page-head">
+          <h2 class="section-title" style="font-size: 24px; color: white; margin-top: 20px;">Continuar viendo...</h2>
+          <p class="hint" style="margin-top: -10px; margin-bottom: 20px;">Material de apoyo para ejecutivos Multired.</p>
+        </div>
+        
+        <div class="cap-grid" id="capGrid">
+          </div>
+        
+        <div class="ventas-back" style="margin-top: 30px; padding-right: 20px;">
+          <button class="btn" id="btnBackFromCapacitaciones" type="button">← Volver al Inicio</button>
+        </div>
+      </section>
+
+      <!-- VENTAS (MENÚ) -->
+      <section class="ventas-view view" id="viewVentas" style="display:none;">
+        <h2 class="section-title">Ventas</h2>
+
+        <div class="ventas-actions">
+          <button class="action-card glass" id="btnVentasRegistrar" type="button">
+            <div class="action-title">Registrar venta</div>
+            <div class="action-sub">Crear un nuevo registro</div>
+          </button>
+
+          <button class="action-card glass" id="btnVentasListado" type="button">
+            <div class="action-title" id="tituloMisVentas">Mis Ventas</div>
+            <div class="action-sub">Ver tu historial personal</div>
+          </button>
+
+          <button class="action-card glass admin-only" id="btnAdminPanelVentas" type="button" style="border-left: 4px solid #facc15;">
+            <div class="action-title" style="color: #facc15;">Panel de Supervisor 👑</div>
+            <div class="action-sub">Auditar a todos los ejecutivos</div>
+          </button>
+
+          <button class="action-card glass backoffice-only" id="btnBackofficePanelVentas" type="button" style="border-left: 4px solid #22c55e;">
+            <div class="action-title" style="color: #22c55e;">Panel BackOffice 🟢</div>
+            <div class="action-sub">Gestión de órdenes y validación</div>
+          </button>
+        </div>
+
+        <div class="ventas-back">
+          <button class="btn" id="btnBackDashboard" type="button">← Volver al Dashboard</button>
+        </div>
+      </section>
+
+      <!-- VENTAS LISTADO -->
+     <section class="page view" id="viewCart" style="display:none;">
+        <div class="page-head">
+          <h2 class="section-title">Listado de ventas</h2>
+          
+          <div class="filter-toolbar glass">
+            
+            <div class="search-wrapper">
+              <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input class="filter-input" id="cartSearch" type="search" placeholder="Buscar por RUT, nombre o código..." />
+            </div>
+
+            <div class="filter-wrapper">
+              <svg class="filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+              <select class="filter-select" id="cartStatusFilter">
+                <option value="">Todos los estados</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="Validación">Validación</option>
+                <option value="Instalación">Instalación</option>
+                <option value="Exitosa">Exitosa</option>
+                <option value="Rechazada">Rechazada</option>
+              </select>
+            </div>
+
+            <div class="filter-wrapper" style="min-width: 130px;">
+              <input type="date" class="filter-input" id="cartDateFrom" title="Fecha Desde" style="padding-left: 14px; color: var(--text-muted);" />
+            </div>
+            <div class="filter-wrapper" style="min-width: 130px;">
+              <input type="date" class="filter-input" id="cartDateTo" title="Fecha Hasta" style="padding-left: 14px; color: var(--text-muted);" />
+            </div>
+
+            <div class="filter-actions">
+              <button class="btn-action secondary" id="btnCartRefresh" title="Actualizar lista">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+              </button>
+              
+              <button class="btn-action flat export-btn" id="btnCartExport" title="Descargar Excel">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Exportar
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="sales-grid" id="cartBody" style="margin-top:18px;">
+          </div>
+
+        <div class="ventas-back">
+          <button class="btn" id="btnBackFromCart" type="button">← Volver</button>
+        </div>
+      </section>
+     <section class="page view" id="viewAdminPanel" style="display:none;">
+       <div class="page-head">
+          <h2 class="section-title" id="adminPanelTitle" style="color: #facc15;">Panel de Supervisor 👑</h2>
+          <p class="hint" style="margin:0;">Auditoría de ejecutivos y revisión de estados.</p>
+        </div>
+
+        <div class="modal-tabs" style="margin-top: 14px; margin-bottom: 0;">
+          <button class="btn-action secondary tab active" id="tabAdminVentas" onclick="switchAdminTab('ventas')">📊 Ventas Registradas</button>
+          <button class="btn-action secondary tab admin-only" id="tabAdminKyc" onclick="switchAdminTab('kyc')">🆔 Verificación de Carnet</button>
+          <button class="btn-action secondary tab admin-only" id="tabAdminMapa" onclick="switchAdminTab('mapa')">🗺️ Mapa de Calor</button>
+        </div>
+     <div id="adminTabVentas">
+        <div class="card glass" style="margin-top:14px;">
+          
+          <div class="search-row admin-only" style="margin-bottom: 18px; padding: 12px; background: rgba(34, 197, 94, 0.05); border: 1px dashed #22c55e; border-radius: 8px; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="font-size: 24px;">📊</span>
+              <div>
+                <label style="color: #22c55e; font-weight: 900; font-size: 14px; display:block;">Carga Masiva de Estados Movistar</label>
+                <span style="font-size: 11px; color: var(--text-muted);">Sube el Excel para actualizar órdenes automáticamente.</span>
+              </div>
+            </div>
+           <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+              <input type="file" id="fileCargaMasiva" accept=".csv, .xlsx, .xls" style="display: none;" />
+              
+              <label for="fileCargaMasiva" class="btn" style="cursor: pointer; display: flex; align-items: center; gap: 8px; border-color: rgba(34,197,94,.4); background: rgba(34,197,94,.05); color: #4ade80; margin: 0;">
+                📁 Elegir Excel
+              </label>
+              
+              <span id="fileNameDisplay" style="font-size: 13px; color: var(--text-muted); max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Ningún archivo</span>
+              
+              <button class="primary primary-green" id="btnCargaMasiva" type="button">Procesar Archivo</button>
+            </div>
+          </div>
+          <div style="height: 1px; background: var(--border-light); margin-bottom: 18px;"></div>
+
+          <div class="search-row">
+            <label class="field-label" style="margin-bottom:0; color:#facc15;">Seleccionar Ejecutivo:</label>
+            <select class="field" id="adminSellerSelect" style="max-width:300px; border-color: rgba(250, 204, 21, 0.4);">
+              <option value="">Todos los vendedores</option>
+            </select>
+            <button class="primary" id="btnAdminRefresh" type="button" style="background: rgba(250, 204, 21, 0.15); border-color: #facc15; color:#facc15;">Actualizar</button>
+          </div>
+          
+          <div class="grid" style="margin-top: 18px; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));">  
+             <div class="detail-box" style="text-align:center; background: rgba(255,255,255,0.02);"><div class="detail-h">Ventas Totales</div><div class="detail-c" id="admKpiTotal" style="font-size: 24px; color: var(--text-main);">0</div></div>
+             <div class="detail-box" style="text-align:center; background: rgba(34, 197, 94, 0.05); border-color: rgba(34, 197, 94, 0.3);"><div class="detail-h" style="color:#4ade80;">Exitosas</div><div class="detail-c" id="admKpiExitosas" style="font-size: 24px; color: #4ade80;">0</div></div>
+             <div class="detail-box" style="text-align:center; background: rgba(250, 204, 21, 0.05); border-color: rgba(250, 204, 21, 0.3);"><div class="detail-h" style="color:#facc15;">Pendientes</div><div class="detail-c" id="admKpiPendientes" style="font-size: 24px; color: #facc15;">0</div></div>
+             <div class="detail-box" style="text-align:center; background: rgba(239, 68, 68, 0.05); border-color: rgba(239, 68, 68, 0.3);"><div class="detail-h" style="color:#f87171;">Rechazadas</div><div class="detail-c" id="admKpiRechazadas" style="font-size: 24px; color: #f87171;">0</div></div>
+          </div>
+        </div>
+
+        <div style="height: 18px;"></div>
+        
+      <div class="sales-grid" id="adminSalesBody"></div>
+        </div> <div id="adminTabKyc" style="display:none; margin-top: 14px;">
+          <div class="card glass">
+            <h3 style="margin-top: 0; margin-bottom: 5px;">Ejecutivos Pendientes de Aprobación</h3>
+            <p class="hint" style="margin-top: 0; margin-bottom: 15px;">Revisa las fotos del carnet de identidad para validar que sean reales.</p>
+            
+            <div id="kycVerificationList" class="sales-grid">
+              <p style="color: var(--text-muted); text-align: center; width: 100%;">Cargando solicitudes... ⏳</p>
+            </div>
+          </div>
+        </div>
+        
+        <div id="adminTabMapa" style="display:none; margin-top: 14px;">
+          <div class="card glass">
+            <h3 style="margin-top: 0; margin-bottom: 5px;">Zonas Calientes de Venta</h3>
+            <p class="hint" style="margin-top: 0; margin-bottom: 15px;">Densidad de ventas con estado "Exitosa" o "Instalación".</p>
+            <div id="salesMap" style="height: 480px; width: 100%; border-radius: 12px; z-index: 1;"></div>
+          </div>
+        </div>
+
+        <div class="ventas-back">
+          <button class="btn" id="btnBackFromAdmin" type="button">← Volver al Menú</button>
+        </div>
+      </section>
+
+      
+      <!-- DOCUMENTOS -->
+      <section class="page view" id="viewDocs" style="display:none;">
+        <div class="page-head">
+          <h2 class="section-title">Documentos</h2>
+          <p class="hint" style="margin:0;">Aquí podrás cargar PDFs/archivos. Por ahora queda guardado “local” (demo).</p>
+        </div>
+
+        <div class="card glass" style="margin-top:14px;">
+          <label class="field-label">Subir archivo</label>
+          <div class="search-row">
+            <input class="field" id="docFile" type="file" />
+            <button class="primary" id="btnAddDoc" type="button">Agregar</button>
+          </div>
+
+          <div style="height:14px;"></div>
+
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Tipo</th>
+                  <th>Fecha</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="docsBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="ventas-back">
+          <button class="btn" id="btnBackFromDocs" type="button">← Volver</button>
+        </div>
+      </section>
+
+      <!-- AVISOS -->
+      <section class="page view" id="viewAvisos" style="display:none;">
+        <div class="page-head">
+          <h2 class="section-title">Avisos</h2>
+          <div class="page-actions">
+            <button class="btn" id="btnAvisosClear" type="button">Limpiar</button>
+          </div>
+        </div>
+
+        <div class="card glass" style="margin-top:14px;">
+          <div id="avisosList" class="avisos-list"></div>
+        </div>
+
+        <div class="ventas-back">
+          <button class="btn" id="btnBackFromAvisos" type="button">← Volver</button>
+        </div>
+      </section>
+
+      <!-- AJUSTES -->
+       <section class="page view" id="viewSupport" style="display:none;">
+        <div class="page-head">
+          <h2 class="section-title">Centro de Soporte y Auditoría</h2>
+          <div class="filter-toolbar glass">
+            <div class="search-wrapper">
+              <input class="filter-input" id="tkSearch" type="search" placeholder="Buscar ticket, RUT o ejecutivo..." />
+            </div>
+            <div class="filter-wrapper">
+              <select class="filter-select" id="tkStatusFilter">
+                <option value="">Todos los estados</option>
+                <option value="Nuevo">Nuevo</option>
+                <option value="En proceso">En proceso</option>
+                <option value="Resuelto">Resuelto</option>
+              </select>
+            </div>
+            <button class="btn-action secondary" id="btnTkRefresh">🔄 Actualizar</button>
+          </div>
+        </div>
+
+        <div class="card glass" style="margin-top:20px; padding:0; overflow:hidden;">
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Ticket / Bot</th>
+                  <th>Estado</th>
+                  <th>Tema</th>
+                  <th>Prioridad</th>
+                  <th>Ejecutivo</th>
+                  <th>Canal</th>
+                  <th>Fecha</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tkBody">
+                </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="ventas-back" style="margin-top:20px;">
+          <button class="btn" id="btnBackFromSupport" type="button">← Volver</button>
+        </div>
+      </section>
+      <section class="page view" id="viewPolicies" style="display:none;">
+        <div class="page-head">
+          <h2 class="section-title">Políticas y Condiciones de Venta</h2>
+          <p class="hint" style="margin:0;">Reglas operativas y comerciales obligatorias para ejecutivos de Multired.</p>
+        </div>
+
+        <div class="card glass" style="margin-top:14px; border-left: 4px solid #22c55e;">
+          <h3 style="margin-top:0; color: #4ade80; font-size: 16px;">1. Estructura Comisional y Pagos</h3>
+          <ul style="color: var(--text-muted); font-size: 14px; padding-left: 18px; line-height: 1.6;">
+            <li><b style="color: var(--text-main);">Valor por Cliente:</b> $50.000 por cliente instalado.</li>
+            <li>Las comisiones solo se pagan una vez que la venta se refleje en nuestro sistema con estado <b>"INSTALADA"</b> o <b>"PORTADA"</b>.</li>
+            <li>Dichos estados se actualizarán únicamente cuando la información sea confirmada directamente por la validación oficial de Movistar en el CRM.</li>
+            <li><b style="color: var(--text-main);">Días de pago:</b> Martes y Viernes, sin excepciones. El cierre de actualizaciones se realiza el día previo al pago.</li>
+          </ul>
+        </div>
+
+        <div class="card glass" style="margin-top:14px; border-left: 4px solid #ef4444;">
+          <h3 style="margin-top:0; color: #f87171; font-size: 16px;">2. Política de Ventas (Fraude)</h3>
+          <p class="hint" style="margin-top: 0;">Las siguientes ventas están estrictamente prohibidas y causarán la anulación de comisiones:</p>
+          <ul style="color: var(--text-muted); font-size: 14px; padding-left: 18px; line-height: 1.6;">
+            <li>Clientes con altas menores o iguales a 30 días (bajas recientes).</li>
+            <li>Clientes marcados como <b>"FA COBRANZA"</b> (deuda hogar o móvil).</li>
+            <li>Ventas que superen 2 ingresos con el mismo RUT, o una misma dirección con distinto RUT.</li>
+            <li>Direcciones bloqueadas por fraude.</li>
+            <li><i>Excepción:</i> El cliente podrá contratar en 2 direcciones solo si tiene antigüedad de 4 meses y boletas al día.</li>
+          </ul>
+        </div>
+
+        <div class="card glass" style="margin-top:14px; border-left: 4px solid #019DF4;">
+          <h3 style="margin-top:0; color: #38bdf8; font-size: 16px;">3. Accesos y Cuentas Bancarias</h3>
+          <ul style="color: var(--text-muted); font-size: 14px; padding-left: 18px; line-height: 1.6;">
+            <li>Los datos bancarios ingresados deben pertenecer <b>exclusivamente</b> al titular de la cuenta Multired. No se aceptan cuentas de terceros.</li>
+            <li>Las credenciales de acceso son personales. Ingresar ventas de terceros causará la expulsión inmediata.</li>
+            <li>Toda la información contenida en el sistema (clientes, agendas, etc.) es confidencial.</li>
+            <li>Nos reservamos el derecho de monitorear el sistema y revocar accesos en caso de detectar irregularidades.</li>
+          </ul>
+        </div>
+
+        <div class="card glass" style="margin-top:14px;">
+          <h3 style="margin-top:0; color: var(--text-main); font-size: 16px;">4. Soporte y Horarios</h3>
+          <ul style="color: var(--text-muted); font-size: 14px; padding-left: 18px; line-height: 1.6;">
+            <li>El bot de factibilidad y el ingreso de ventas operan <b>24/7</b>.</li>
+            <li>El horario de atención del equipo de Soporte (BackOffice) es de Lunes a Viernes de 10:00 a 19:00 hrs, y Sábados de 10:00 a 17:00 hrs.</li>
+            <li>Es responsabilidad del vendedor revisar regularmente el sistema y la sección de "Avisos".</li>
+          </ul>
+        </div>
+
+        <div class="ventas-back" style="margin-top: 24px;">
+          <button class="btn" id="btnBackFromPolicies" type="button">← Volver al Menú</button>
+        </div>
+      </section>
+
+      <section class="page view" id="viewSettings" style="display:none;">
+        <div class="page-head">
+          <h2 class="section-title">Ajustes</h2>
+          <p class="hint" style="margin:0;">Preferencias (beta).</p>
+        </div>
+
+        <!-- Apariencia -->
+        <div class="card glass" style="margin-top:14px;">
+          <div class="settings-title">Apariencia</div>
+          <div class="settings-sub">“Sistema” se adapta automáticamente.</div>
+
+          <div style="height:12px;"></div>
+
+          <div class="settings-row">
+            <div class="settings-left">
+              <div class="settings-label">Usar “Sistema”</div>
+              <div class="settings-hint">Sigue el modo del iPhone/PC.</div>
+            </div>
+            <label class="ios-switch">
+              <input type="checkbox" id="swSystemTheme" />
+              <span class="track"></span>
+            </label>
+          </div>
+
+          <div class="settings-row">
+            <div class="settings-left">
+              <div class="settings-label">Modo oscuro</div>
+              <div class="settings-hint">Solo si “Sistema” está desactivado.</div>
+            </div>
+            <label class="ios-switch">
+              <input type="checkbox" id="swDarkTheme" />
+              <span class="track"></span>
+            </label>
+          </div>
+
+          <div class="settings-divider"></div>
+
+          <div class="settings-row">
+            <div class="settings-left">
+              <div class="settings-label">Vista rápida</div>
+              <div class="settings-hint" id="themeStatusText">—</div>
+            </div>
+            <span class="chip" id="themeChip">—</span>
+          </div>
+        </div>
+
+        <!-- Notificaciones -->
+        <div class="card glass" style="margin-top:14px;">
+          <div class="settings-title">Notificaciones</div>
+          <div class="settings-sub">Sonido + No molestar.</div>
+
+          <div style="height:12px;"></div>
+
+          <div class="settings-row">
+            <div class="settings-left">
+              <div class="settings-label">Sonido en mensajes</div>
+              <div class="settings-hint">Reproducir “beep” cuando llegue un mensaje.</div>
+            </div>
+            <label class="ios-switch">
+              <input type="checkbox" id="swSound" />
+              <span class="track"></span>
+            </label>
+          </div>
+
+          <div class="settings-row">
+            <div class="settings-left">
+              <div class="settings-label">No molestar</div>
+              <div class="settings-hint">Oculta toasts y desactiva sonido.</div>
+            </div>
+            <label class="ios-switch">
+              <input type="checkbox" id="swDnd" />
+              <span class="track"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="ventas-back">
+          <button class="btn" id="btnBackFromSettings" type="button">← Volver</button>
+        </div>
+      </section>
+
+      <!-- PERFIL INFO -->
+      <section class="page view" id="viewProfileInfo" style="display:none;">
+        <div class="page-head">
+          <h2 class="section-title">Información de perfil</h2>
+        </div>
+
+        <div class="card glass" style="margin-top:14px;">
+          <div class="hint" style="margin:0;" id="profileInfoBox">—</div>
+        </div>
+
+        <div class="ventas-back">
+          <button class="btn" id="btnBackFromProfileInfo" type="button">← Volver</button>
+        </div>
+      </section>
+
+      <!-- PERFIL SEGURIDAD -->
+      <section class="page view" id="viewProfileSecurity" style="display:none;">
+        <div class="page-head">
+          <h2 class="section-title">Seguridad</h2>
+        </div>
+
+        <div class="card glass" style="margin-top:14px;">
+          <div class="hint" style="margin:0;">
+            (Demo) Bloqueo por intentos, reglas de contraseña, logout y logout all.
+          </div>
+          <div style="height:12px;"></div>
+          <button class="btn" id="btnShowSessions" type="button">Ver sesión (demo)</button>
+        </div>
+
+        <div class="ventas-back">
+          <button class="btn" id="btnBackFromProfileSecurity" type="button">← Volver</button>
+        </div>
+      </section>
+
+      <footer class="foot">
+        <span>Desarrollado x BA</span>
+      </footer>
+    </main>
+  </div>
+
+  <!-- MODAL VALIDADOR -->
+  <div class="modal-backdrop" id="modalBackdrop" style="display:none;">
+    <div class="modal glass modal-wide" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h3>Validador (demo)</h3>
+        <button class="icon-btn" id="btnCloseModal" title="Cerrar">✕</button>
+      </div>
+
+      <div class="modal-tabs" style="display: flex; gap: 10px; margin-bottom: 20px;">
+  <button class="btn-action secondary tab active" data-tab="rut" style="border-radius: 999px;">Verificar RUT</button>
+  <button class="btn-action secondary tab" data-tab="dir" style="border-radius: 999px;">Verificar Dirección</button>
+</div>
+
+      <div class="modal-body">
+        
+        <div id="tab-rut">
+          <label class="field-label">RUT</label>
+          <div class="field-row">
+            <input class="field" id="rutInput" type="text" placeholder="Ej: 20.667.530-6" maxlength="12" />
+            <button class="primary" id="btnCheckRut" type="button">✔</button>
+          </div>
+
+          <div class="result-box glass" id="rutResult" style="display:none; margin-top:14px; padding:14px; border-radius:16px;">
+            <div class="result-title" id="rutTitle" style="font-weight:900;">Resultado</div>
+            <div class="result-lines" id="rutLines" style="margin-top:8px;"></div>
+          </div>
+
+          <div id="rutAcciones" style="display:none; gap: 10px; margin-top: 14px; justify-content: flex-end;">
+            <button class="btn" id="btnAccionNueva" type="button">Nueva consulta</button>
+            <button class="btn" id="btnAccionFinalizar" type="button">Finalizar</button>
+            <button class="primary" id="btnAccionTicket" type="button">Ticket OK</button>
+          </div>
+        </div> <div id="tab-dir" style="display:none;">
+          <div class="form-grid">
+
+             <!-- VALIDACIÓN DIRECCIÓN REAL -->
+    <div class="form-field wide">
+      <label class="field-label">Buscar Dirección (validación automática)</label>
+      <input class="field" id="addrQuery"
+             placeholder="Ej: Av. Apoquindo 3000, Las Condes, RM"
+             autocomplete="off" />
+      <div id="addrSug" class="addr-sug" style="display:none;"></div>
+    </div>
+            <div class="form-field wide">
+              <label class="field-label">Región</label>
+              <select class="field" id="dirRegion">
+                <option value="">Seleccione Región</option>
+              </select>
+            </div>
+            
+            <div class="form-field wide">
+              <label class="field-label">Comuna</label>
+              <select class="field" id="dirComuna" disabled>
+                <option value="">Seleccione Comuna primero</option>
+              </select>
+            </div>
+
+            <div class="form-field wide">
+              <label class="field-label">Calle</label>
+              <input class="field" id="dirCalle" type="text" placeholder="Seleccione Calle" disabled />
+            </div>
+
+            <div class="form-field">
+              <label class="field-label">Número</label>
+              <input class="field" id="dirNumero" type="text" placeholder="Seleccione Numero" disabled />
+            </div>
+
+            <div class="form-field">
+              <label class="field-label">Depto (Opcional)</label>
+              <input class="field" id="dirDepto" type="text" placeholder="Seleccione Depto" disabled />
+            </div>
+          </div>
+
+          <div style="height:14px;"></div>
+          <button class="primary" id="btnCheckDir" type="button" style="width:100%;" disabled>Aceptar</button>
+
+          <div class="result-box glass" id="dirResult" style="display:none; margin-top:14px; padding:14px; border-radius:16px;">
+            <div class="result-title" id="dirTitle" style="font-weight:900;">Resultado</div>
+            <div class="result-lines" id="dirLines" style="margin-top:8px;"></div>
+          </div>
+        </div> 
+
+        <p class="hint" style="margin-top: 15px;">(Demo: respuestas simuladas para mostrar funcionamiento)</p>
+      </div> 
+    </div> 
+  </div>
+       
+  <!-- MODAL REGISTRAR VENTA -->
+ <div class="modal-backdrop" id="ventaBackdrop" style="display:none;">
+    <div class="modal glass modal-wide" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h3>Registrar venta</h3>
+        <button class="icon-btn" id="btnCloseVenta" title="Cerrar">✕</button>
+      </div>
+
+      <div class="modal-body">
+    <form id="ventaForm">
+          <div id="ventaPaso1">
+            <div class="form-grid">
+              <div class="form-field">
+                <label>RUT</label>
+                <input class="field" type="text" id="rut" placeholder="12.345.678-9" required />
+              </div>
+        
+              <div class="form-field">
+                <label>Nombre</label>
+                <input class="field" type="text" id="nombre" placeholder="Nombre completo" required />
+              </div>
+        
+              <div class="form-field">
+                <label>Correo</label>
+                <input class="field" type="email" id="correo" placeholder="correo@ejemplo.com" required />
+              </div>
+        
+              <div class="form-field">
+                <label>Teléfono</label>
+                <input class="field" type="tel" id="telefono" placeholder="+56 9 1234 5678" required />
+              </div>
+        
+              <div class="form-field">
+                <label>Región</label>
+                <select class="field" id="ventaRegion" required>
+                  <option value="">Seleccione Región</option>
+                </select>
+              </div>
+        
+              <div class="form-field">
+                <label>Comuna</label>
+                <select class="field" id="ventaComuna" required disabled>
+                  <option value="">Seleccione Comuna primero</option>
+                </select>
+              </div>
+        
+              <div class="form-field wide">
+                <label>Calle y Número</label>
+                <input class="field" type="text" id="ventaDireccion" list="listaCallesVenta" placeholder="Ej: Los Leones 1234" required disabled />
+                <datalist id="listaCallesVenta"></datalist>
+              </div>
+        
+              <div class="form-field">
+                <label>Tipo de vivienda</label>
+                <select class="field" id="tipoVivienda" required>
+                  <option value="">Seleccione...</option>
+                  <option value="casa">Casa</option>
+                  <option value="depto">Departamento</option>
+                </select>
+              </div>
+        
+              <div class="form-field" id="deptoBox" style="display:none;">
+                <label>N° Depto</label>
+                <input class="field" type="text" id="numDepto" placeholder="Ej: 1204" />
+              </div>
+        
+              <div class="form-field wide">
+                <label>Evidencias (PDF/foto/contrato)</label>
+                <input class="field" type="file" id="ventaEvid" multiple />
+                <div class="mini-hint">Adjunta la cédula o el contrato aquí.</div>
+              </div>
+            </div>
+        
+            <div class="form-actions">
+              <button type="button" class="btn" id="btnCancelarVenta">Cancelar</button>
+              <button type="button" class="primary wide-primary" id="btnVentaSiguiente">Siguiente ➔</button>
+            </div>
+          </div>
+        
+          <div id="ventaPaso2" style="display:none;">
+            <div class="form-grid">
+              
+              <div class="form-field wide">
+                <label>¿Qué servicios contratará el cliente?</label>
+                <div class="prod-toggle-group">
+                  <label class="prod-toggle"><input type="checkbox" id="chkFibra"><span>🌐 Fibra</span></label>
+                  <label class="prod-toggle"><input type="checkbox" id="chkTv"><span>📺 Televisión</span></label>
+                  <label class="prod-toggle"><input type="checkbox" id="chkFijo"><span>📞 Teléfono Fijo</span></label>
+                </div>
+              </div>
+        
+             <div class="form-field wide" id="boxOpcionesFibra" style="display:none; padding: 10px; background: rgba(1, 157, 244, 0.05); border: 1px solid var(--brand-blue); border-radius: 8px;">
+                <label style="color: var(--brand-blue);">Velocidad de Fibra</label>
+                <select class="field" id="planFibra">
+                  <option value="">Seleccione velocidad...</option>
+                  <option value="Fibra 400 MB - $12.990">Fibra 400 MB - $12.990</option>
+                  <option value="Fibra 600 MB - $15.990">Fibra 600 MB - $15.990</option>
+                  <option value="Fibra 800 MB - $16.990">Fibra 800 MB - $16.990</option>
+                  <option value="Fibra Gamer - $20.990">Fibra Gamer - $20.990</option>
+                </select>
+              </div>
+        
+              <div class="form-field wide" id="boxOpcionesTv" style="display:none; padding: 10px; background: rgba(201, 255, 47, 0.05); border: 1px solid var(--lime); border-radius: 8px;">
+                <label style="color: var(--lime);">Plan de Televisión</label>
+                <select class="field" id="planTv">
+                  <option value="">Seleccione plan de TV...</option>
+                  <option value="TV Inicial (60 canales) - $9.990">TV Inicial (60 canales) - $9.990</option>
+                  <option value="TV Full (110 canales) - $14.990">TV Full (110 canales) - $14.990</option>
+                </select>
+              </div>
+        
+              <div class="form-field wide" id="boxOpcionesFijo" style="display:none; padding: 10px; background: rgba(239, 68, 68, 0.05); border: 1px solid #ef4444; border-radius: 8px;">
+                <label style="color: #ef4444;">Plan de Telefonía</label>
+                <select class="field" id="planFijo">
+                  <option value="">Seleccione línea...</option>
+                  <option value="Línea Ilimitada Nacional - $5.990">Línea Ilimitada Nacional - $5.990</option>
+                  <option value="Línea Minutos Móviles - $7.990">Línea + 300 Min a Móviles - $7.990</option>
+                </select>
+              </div>
+        
+              <div class="form-field">
+                <label>Ciclo de Facturación</label>
+                <select class="field" id="ventaCiclo" required>
+                  <option value="">Elegir fecha de pago...</option>
+                  <option value="Ciclo 1">Ciclo 1 (Pago el 21 del mes)</option>
+                  <option value="Ciclo 12">Ciclo 12 (Pago el 03 mes sgte)</option>
+                  <option value="Ciclo 19">Ciclo 19 (Pago el 10 mes sgte)</option>
+                </select>
+                <div class="mini-hint">Según preferencia del cliente.</div>
+              </div>
+        
+             <div class="form-field">
+                <label>Agendar Instalación</label>
+                <select class="field" id="ventaFechaTipo" required>
+                  <option value="Lo antes posible">Lo antes posible</option>
+                  <option value="rango">Elegir rango semanal</option>
+                </select>
+              </div>
+        
+              <div class="form-field wide" id="boxVentaFecha" style="display:none;">
+                <label>Seleccionar Semana</label>
+                <select class="field" id="ventaFechaEspecifica">
+                  <option value="">Seleccione la semana...</option>
+                  <option value="Primera semana del mes">Primera semana del mes</option>
+                  <option value="Segunda semana del mes">Segunda semana del mes</option>
+                  <option value="Tercera semana del mes">Tercera semana del mes</option>
+                  <option value="Cuarta semana del mes">Cuarta semana del mes</option>
+                </select>
+              </div>
+            </div>
+        
+            <div class="form-actions">
+              <button type="button" class="btn" id="btnVentaAtras">⬅ Volver a Datos</button>
+              <button type="submit" class="primary wide-primary" style="background:#22c55e; border-color:#22c55e;">Guardar Venta Definitiva</button>
+            </div>
+          </div>
+        </form>
+
+        <p class="hint" style="margin-top:12px;">
+          (Demo: guarda local. Luego conectamos a backend / BD.)
+        </p>
+      </div>
+    </div>
+  </div>
+  <!-- MODAL: DETALLE VENTA -->
+ <div class="modal-backdrop" id="saleDetailBackdrop" style="display:none;">
+    <div class="modal glass modal-wide" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h3 id="saleDetailTitle">Detalle de venta</h3>
+        <button class="icon-btn" id="btnCloseSaleDetail" title="Cerrar">✕</button>
+      </div>
+      <div class="modal-body">
+        
+        <div class="sale-timeline" id="saleTimeline"></div>
+        <div style="height: 20px;"></div>
+
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-h">Datos</div>
+            <div class="detail-c" id="saleDetailData">—</div>
+          </div>
+          <div class="detail-box">
+            <div class="detail-h">Evidencias</div>
+            <div class="detail-c" id="saleDetailEvid">—</div>
+            <div style="height:10px;"></div>
+            <label class="field-label">Agregar evidencia (demo)</label>
+            <div class="field-row">
+              <input class="field" id="saleAddEvid" type="file" multiple />
+              <button class="btn" id="btnAddSaleEvid" type="button">Agregar</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="detail-box staff-only" style="margin-top: 12px; background: rgba(0,0,0,0.15); border-color: rgba(56, 189, 248, 0.3);">
+          <div class="detail-h" style="color: #38bdf8;">🔍 Historial de Auditoría</div>
+          <div class="detail-c" id="saleDetailLog" style="font-size: 12px; display: flex; flex-direction: column; gap: 6px;">—</div>
+        </div>
+
+        <div style="height:12px;"></div>
+
+        <div class="field-row staff-only" style="align-items: flex-start; flex-direction: column; gap: 10px;">
+          <div style="display: flex; gap: 10px; width: 100%;">
+            <select class="field" id="saleDetailStatus" style="flex: 1;">
+              <option value="Pendiente">Pendiente</option>
+              <option value="Validación">Validación</option>
+              <option value="Instalación">Instalación</option>
+              <option value="Exitosa">Exitosa</option>
+              <option value="Rechazada">Rechazada</option>
+            </select>
+            <button class="primary" id="btnSaveSaleStatus" type="button">Actualizar estado</button>
+          </div>
+          
+          <div id="boxNumeroOrden" style="display: none; width: 100%; background: rgba(56, 189, 248, 0.1); border: 1px dashed #38bdf8; padding: 10px; border-radius: 8px;">
+            <label style="color: #38bdf8; font-size: 12px; font-weight: bold; margin-bottom: 4px; display: block;">Número de Orden (Movistar)</label>
+            <input type="text" id="inputNumeroOrden" class="field" placeholder="Ej: 1234567890" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);" />
+            <div class="mini-hint" style="color: rgba(255,255,255,0.6);">Requerido para pasar a Validación. Máx 10 dígitos.</div>
+          </div>
+        </div>
+
+        <p class="hint admin-only" style="margin-top:10px; color:#facc15;">
+          👑 Modo Admin: Al actualizar el estado, el vendedor lo verá reflejado en su panel.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ CHAT SOPORTE FLOTANTE -->
+<button class="support-fab admin-only admin-support-fab" id="adminSupportFab" title="Gestión de Tickets de Soporte">
+    <svg viewBox="0 0 100 100" class="ruts-icon" xmlns="http://www.w3.org/2000/svg">
+      <path d="M82.4,32.6l9.3-9.3v23.3H68.4l7.6-7.6C71,28.6,61.2,22,50,22c-15.5,0-28,12.5-28,28H10c0-22.1,17.9-40,40-40C62.8,10,74.3,18.9,82.4,32.6z" fill="currentColor"/>
+      <path d="M17.6,67.4l-9.3,9.3V53.4h23.3l-7.6,7.6C29,71.4,38.8,78,50,78c15.5,0,28-12.5,28-28h12c0,22.1-17.9,40-40,40C37.2,90,25.7,81.1,17.6,67.4z" fill="currentColor"/>
+      <text x="50" y="58" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="24" text-anchor="middle" fill="currentColor">RUTS</text>
+    </svg>
+  </button>
+
+  <button class="support-fab" id="supportFab" aria-label="Soporte en línea" title="Soporte en línea">
+    💬
+    <span class="badge" id="chatBadge" style="display:none;">0</span>
+  </button>
+
+  <div class="support-panel glass" id="supportPanel" style="display:none;">
+    <div class="support-head">
+      <div class="support-title">
+        <span class="support-dot"></span>
+        <span id="supportHeaderText">Soporte</span>
+      </div>
+      <div class="support-actions">
+        <button class="icon-btn" id="supportAttach" title="Adjuntar (al ticket)">📎</button>
+        <input type="file" id="supportAttachInput" style="display:none;" />
+        <button class="icon-btn" id="supportReset" title="Cerrar ticket (demo)">✓</button>
+        <button class="icon-btn" id="supportClose" title="Cerrar">✕</button>
+      </div>
+    </div>
+
+    <div class="support-body" id="supportBody"></div>
+
+    <div class="support-compose glass">
+      <input class="field support-mini" id="supportMsg" type="text" placeholder="Escribe tu mensaje..." />
+      <button class="primary" id="supportSend" type="button">Enviar</button>
+    </div>
+
+    <div class="support-hintline">
+      <span class="hint" id="supportFooterHint" style="margin:0;">—</span>
+    </div>
+  </div>
+
+  <!-- MODAL: INTAKE ANTES DE ABRIR CHAT -->
+  <div class="modal-backdrop" id="intakeBackdrop" style="display:none;">
+    <div class="modal glass" role="dialog" aria-modal="true" style="max-width:640px;">
+      <div class="modal-head">
+        <h3>Abrir ticket de soporte</h3>
+        <button class="icon-btn" id="btnCloseIntake" title="Cerrar">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-field">
+            <label>Tema</label>
+            <select class="field" id="intakeTopic">
+              <option value="Conectividad">Conectividad</option>
+              <option value="Factibilidad">Factibilidad</option>
+              <option value="Cuenta">Cuenta</option>
+              <option value="Ventas">Ventas</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label>Prioridad</label>
+            <select class="field" id="intakePriority">
+              <option value="Baja">Baja</option>
+              <option value="Media" selected>Media</option>
+              <option value="Alta">Alta</option>
+            </select>
+          </div>
+
+          <div class="form-field wide">
+            <label>Canal preferido</label>
+            <select class="field" id="intakeChannel">
+              <option value="WhatsApp">WhatsApp</option>
+              <option value="Correo">Correo</option>
+              <option value="Llamada">Llamada</option>
+            </select>
+          </div>
+
+          <div class="form-field wide" id="intakeDynamicBox">
+            <label id="intakeDynamicLabel">Describe el problema</label>
+            <input class="field" id="intakeDynamic" type="text" placeholder="Describe en 1 frase..." />
+            <div class="mini-hint" id="intakeDynamicHint">—</div>
+          </div>
+
+          <div class="form-field wide">
+            <label>Confirmación (demo)</label>
+            <div class="hint" style="margin:0;">Al crear el ticket: “Te responderemos al correo/WhatsApp”.</div>
+          </div>
+        </div>
+
+        <div style="height:14px;"></div>
+        <button class="primary" id="btnCreateTicket" type="button" style="width:100%;">Crear ticket y abrir chat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: DETALLE TICKET (PANEL INTERNO) -->
+  <div class="modal-backdrop" id="ticketDetailBackdrop" style="display:none;">
+    <div class="modal glass modal-wide" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h3 id="ticketDetailTitle">Ticket</h3>
+        <button class="icon-btn" id="btnCloseTicketDetail" title="Cerrar">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-h">Datos del ticket</div>
+            <div class="detail-c" id="ticketDetailData">—</div>
+
+            <div style="height:12px;"></div>
+            <label class="field-label">Cambiar estado (demo)</label>
+            <div class="field-row">
+              <select class="field" id="ticketDetailStatus">
+                <option value="Nuevo">Nuevo</option>
+                <option value="En proceso">En proceso</option>
+                <option value="Resuelto">Resuelto</option>
+              </select>
+              <button class="primary" id="btnSaveTicketStatus" type="button">Guardar</button>
+            </div>
+          </div>
+
+          <div class="detail-box">
+            <div class="detail-h">Conversación</div>
+            <div class="detail-chat" id="ticketDetailChat">—</div>
+          </div>
+        </div>
+        <p class="hint" style="margin-top:10px;">(Demo) Aquí ves chat guardado por ticket + adjuntos.</p>
+      </div>
+    </div>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+  <script src="config.js"></script>
+  <script src="ui.js"></script>
+  <script src="auth.js"></script>
+  <script src="ventas.js"></script>
+  <script src="admin.js"></script>
+  
+  <script src="app.js"></script>
+  
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('✅ PWA instalada correctamente:', reg.scope))
+          .catch(err => console.log('❌ Error al instalar PWA:', err));
+      });
+    }
+  </script>
+</body>
+</html>
