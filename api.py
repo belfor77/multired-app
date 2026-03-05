@@ -52,9 +52,14 @@ def iniciar_driver():
     global driver_global
     if driver_global is None:
         opts = ChromeOptions()
+        opts.add_argument("--headless=new") # Fundamental: Navega sin abrir ventana (para servidores)
+        opts.add_argument("--no-sandbox") # Obligatorio por seguridad en Linux
+        opts.add_argument("--disable-dev-shm-usage") # Evita que el servidor colapse por falta de memoria RAM
+        opts.add_argument("--window-size=1920,1080") # Le hace creer a Movistar que es una pantalla grande
+        
         driver_global = webdriver.Chrome(options=opts)
         driver_global.get("https://movistarclick.movistar.cl/preevaluator")
-        print("\n>>> NAVEGADOR LISTO. INICIA SESIÓN MANUALMENTE PARA QUE EL ROBOT PUEDA TRABAJAR.")
+        print("\n>>> NAVEGADOR INVISIBLE LISTO EN LA NUBE.")
 
 def reiniciar_interfaz_movistar():
     global driver_global
@@ -330,9 +335,15 @@ def consultar_direccion(query: AddressQuery):
         return {"status": "error", "message": error_msg}# ===================== INICIO DEL SERVIDOR Y RUTAS =====================
 @app.on_event("startup")
 async def startup_event():
-    iniciar_driver()
-    # Arrancar el robot en segundo plano al encender la API
-    asyncio.create_task(robot_vigilante())
-
-if __name__ == "__main__":
-    uvicorn.run("api:app", host="0.0.0.0", port=8000, reload=True)
+  def iniciar_driver():
+    global driver_global
+    if driver_global is None:
+        opts = ChromeOptions()
+        opts.add_argument("--headless=new") # Modo invisible para servidores
+        opts.add_argument("--no-sandbox") # Permiso obligatorio en Linux
+        opts.add_argument("--disable-dev-shm-usage") # Evita que el servidor colapse por memoria
+        opts.add_argument("--window-size=1920,1080") # Tamaño de pantalla virtual
+        
+        driver_global = webdriver.Chrome(options=opts)
+        driver_global.get("https://movistarclick.movistar.cl/preevaluator")
+        print("\n>>> NAVEGADOR INVISIBLE LISTO EN LA NUBE.")
