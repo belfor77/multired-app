@@ -568,8 +568,7 @@ ventaDireccion?.addEventListener("input", (e) => {
   clearTimeout(timerVentaBusqueda);
   timerVentaBusqueda = setTimeout(async () => {
     try {
-      const res = await fetch(`http://localhost:8000/buscar_calles`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ comuna: comunaActual, calle_parcial: texto }) });
-      const json = await res.json();
+      const res = await fetch(`https://multired-app.onrender.com/buscar_calles`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ comuna: comunaActual, calle_parcial: texto }) });
       if (json.status === "success" && json.data) {
         listaCallesVenta.innerHTML = ""; 
         json.data.map(item => item.streetName || item.description || item).filter(Boolean).forEach(calle => {
