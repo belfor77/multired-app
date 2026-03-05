@@ -177,10 +177,9 @@ const btnAccionFinalizar = $("btnAccionFinalizar");
 const btnAccionTicket = $("btnAccionTicket");
 
 async function llamarReinicioAPI() {
-  try { await fetch("http://localhost:8000/reiniciar", { method: "POST" }); } 
+  try { await fetch("https://multired-app.onrender.com/reiniciar", { method: "POST" }); } 
   catch(e) { console.error("Error al reiniciar la API"); }
 }
-
 function limpiarValidador() {
   if ($("rutInput")) $("rutInput").value = "";
   if ($("rutResult")) $("rutResult").style.display = "none";
@@ -342,9 +341,9 @@ btnCheckDir?.addEventListener("click", async () => {
     } catch (e) { console.warn("Error guardando registro de auditoría."); }
   }
 
-  // 2. Llamada al robot de Python
+// 2. Llamada al robot de Python
   try {
-    const response = await fetch("http://localhost:8000/consultar_direccion", {
+    const response = await fetch("https://multired-app.onrender.com/consultar_direccion", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
